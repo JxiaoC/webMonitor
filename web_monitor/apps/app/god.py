@@ -75,8 +75,8 @@ class SSLHandler(BaseHandler):
 
     def do_add(self):
         name = self.get_argument('name', '')
-        url = self.get_argument('url', '')
-        self._data = ssl_monitor.add(name, url)
+        host = self.get_argument('host', '')
+        self._data = ssl_monitor.add(name, host)
 
     def do_remove(self):
         id = self.get_argument('id', '')
