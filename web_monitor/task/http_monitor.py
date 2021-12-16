@@ -85,10 +85,10 @@ for f in tb_web_list.find({'enable': True}):
     info = tb_web_list.find_by_id(f['_id'])
     ltime = info.get('ltime', now_time)
     rate = info.get('rate', 1)
-    # if (now_time - ltime).total_seconds() < rate * 60:
-    #     print(f['_id'], '距离上一次监控时间不足%s分钟' % rate)
-    #     complete_count += 1
-    #     continue
+    if (now_time - ltime).total_seconds() < rate * 60:
+        print(f['_id'], '距离上一次监控时间不足%s分钟' % rate)
+        complete_count += 1
+        continue
     threading.Thread(target=monitor, args=(f['_id'], info)).start()
     time.sleep(1)
 
