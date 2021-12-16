@@ -17,14 +17,6 @@ common_used_numerals = {}
 for key in common_used_numerals_tmp:
     common_used_numerals[key] = common_used_numerals_tmp[key]
 
-table = 'fZodR9XQDSUm21yCkr6zBqiveYah8bt4xsWpHnJE7jL5VG3guMTKNPAwcF'
-tr = {}
-for i in range(58):
-    tr[table[i]] = i
-s = [11, 10, 3, 8, 4, 6]
-xor = 177451812
-add = 8728348608
-
 
 def isint(a):
     try:

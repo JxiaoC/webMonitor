@@ -5,8 +5,8 @@
 
 usage="Usage: $0 [start | stop]"
 
-PORT_RANGE="10000 10000"
-service="auto-down-anime-server"
+PORT_RANGE="804 804"
+service="web-monitor-server"
 LOG_DIR="/tmp/androidesk/$service"
 pid="$LOG_DIR/service.pid"
 log="$LOG_DIR/service.log"
