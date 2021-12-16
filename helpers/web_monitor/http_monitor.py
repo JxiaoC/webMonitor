@@ -49,7 +49,7 @@ def add(name, url, rate):
     tb_web_list.insert({
         'name': name,
         'atime': datetime.datetime.now(),
-        'ltime': datetime.datetime.now(),
+        'ltime': datetime.datetime(2000, 1, 1),
         'warn_time': None,
         'url': url,
         'con_error_num': 0,
