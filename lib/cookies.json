@@ -1,0 +1,134 @@
+[
+    {
+        "name": "refreshTokenExpires",
+        "value": "2021-12-10T12%3A23%3A10.520Z",
+        "domain": "www.epicgames.com",
+        "path": "/",
+        "expires": 1639138991.711955,
+        "size": 47,
+        "httpOnly": false,
+        "secure": false,
+        "session": false
+    },
+    {
+        "name": "EPIC_EG1",
+        "value": "eg1~eyJraWQiOiJ0RkMyVUloRnBUTV9FYTNxY09kX01xUVQxY0JCbTlrRkxTRGZlSmhzUkc4IiwiYWxnIjoiUFMyNTYifQ.eyJhcHAiOiJkaWVzZWx3ZWIiLCJzdWIiOiJjYjYwZGMxMDg2NGY0ZDRmYWE3ZDc3ZTdiMjFhZGQ2NyIsImR2aWQiOiIwNjBhY2ExNDZjNWI0ODkzOTNiZjAzYTI3NTY5NGViMyIsIm12ZXIiOmZhbHNlLCJjbGlkIjoiODc1YTNiNTdkM2E2NDBhNmI3ZjliNGU4ODM0NjNhYjQiLCJkbiI6IuW5suatu-eZveWrluWFmiIsImFtIjoidG9rZW5fdG9fdG9rZW4iLCJwIjoiZU5xbFZkdVMyakFNXC9aOE9Ed3Rsb2VPWlwvRUVmT3YwRFlTdEJzNDZka1dWWSt2V1ZBOGxtb1RUUVB1VmlTNWFPempsbVBCQWVUWmQzbnF4aDdDS0xFZUFHcFZvdWJHemJITWlDVUF6SlVCRGtBRjczZ1RNSlJTZzBxVnBkNzhQM3l6NndOdVlncG1SYkxUemtZUGZJeHNWajhGRlRmQ2xcL2FjZkFwNkVFdTl1OE9MdDgrYlpaMTJ1M3JnRzJicnZGN1c2MUJPYzJXOU41T0FtMXFLRkQra3ZvOEZteTFrd1lYSnBOVnkxZnJ5c2d3VGIxaFNWNXVDcUprS1RhTERBSWljZFduNXFpNCtpeUhiTWtDRzRYMzdGa3greEJHT3liUW1qU0hoaWR3cG82eFFcLzNlbkxrVXdFV0JId2NOOFM2Um42NnRpT2xmUWtvdmJiUmpkVjh6TVwvaEFYM3NrRHVtQTlqVHVEYVAzK2JPRkhUQlJvZGFOYlpkb2NYRDVaYXdHNFJHZ3A0UmVtQ3VpeFF0OVJ3VU9wQU00NzBEdmY3QkpOQXdEck83cW40Y2tkTWQxZXYxWkFybkV2S0JMRkxRUk1IaVgzUmhWVUNDQThwYUszK1NvYWMzVlB4MEdCWXhOQlR3RXdGTXY2RHBzNTc0dlRCaEZsTkdxMTM5VU9tYytmUFBvOGtGZmxNclROWFh1KzFON2VFXC9GRzdBK3dLcmFnRWRKUnNQK0pGRllrYzJUVjFsT0diVTc3RFFaYlo3VU5LTThwbW9kSFNOMmJJbVFVOUwwQUtyXC9KYUxEazc5b1plNDRYTTJIckxzTFhUS2xGMG03eWpVMGZSdkxRU3FsYms5QVlkV0xzOTU5Wm9XQlp3eXVRK1A3SW9EUklzcFJYNjR0d1FlMDhcLys1cmgxckdFWWRmWTFlVDl0dm5Dd0twQ3dCT1J5dHpUY004bmt3b0Juck9mNWhudHp2cEZYMzRwNllaaDJjaW0zZ2JhM3BVZHZGb1ZVXC9mWlBKcVpjTGcyT1pqUGZhWmxObzVQK2RjWUhYRXZoY2VKT1k3V0QzMEpSeWZjPSIsImlhaSI6ImNiNjBkYzEwODY0ZjRkNGZhYTdkNzdlN2IyMWFkZDY3Iiwic2VjIjowLCJjbHN2YyI6ImRpZXNlbHdlYiIsImxwdiI6MTYzOTAyMzc4OCwidCI6InMiLCJpYyI6dHJ1ZSwiZXhwIjoxNjM5MDUyNTg2LCJpYXQiOjE2MzkwMjM3OTAsImp0aSI6IjIxNmMyZTJlYjllYTQzZmM4MGJjNThjYzA5MzBhZmZkIn0.APT9x4dlxOFdtfnhH9P0C_QCrv67bkLZqk_goVYppA9G2xRccLjQFTOROjZA5HFyflE3leQ8YyqvGZpjYq__v0h0",
+        "domain": "www.epicgames.com",
+        "path": "/",
+        "expires": 1639052587.711835,
+        "size": 1799,
+        "httpOnly": true,
+        "secure": true,
+        "session": false
+    },
+    {
+        "name": "EPIC_SSO_RM",
+        "value": "18490bd4f809405794408180922bc341",
+        "domain": ".epicgames.com",
+        "path": "/",
+        "expires": 1641615788.606279,
+        "size": 43,
+        "httpOnly": true,
+        "secure": true,
+        "session": false
+    },
+    {
+        "name": "_epicSID",
+        "value": "cd8cd3d5b7de4bd1a49d42465b8837d3",
+        "domain": ".epicgames.com",
+        "path": "/",
+        "expires": -1,
+        "size": 40,
+        "httpOnly": true,
+        "secure": true,
+        "session": true
+    },
+    {
+        "name": "REFRESH_EPIC_EG1",
+        "value": "eg1~eyJraWQiOiJ0RkMyVUloRnBUTV9FYTNxY09kX01xUVQxY0JCbTlrRkxTRGZlSmhzUkc4IiwiYWxnIjoiUFMyNTYifQ.eyJzdWIiOiJjYjYwZGMxMDg2NGY0ZDRmYWE3ZDc3ZTdiMjFhZGQ2NyIsImR2aWQiOiIwNjBhY2ExNDZjNWI0ODkzOTNiZjAzYTI3NTY5NGViMyIsInQiOiJyIiwiY2xpZCI6Ijg3NWEzYjU3ZDNhNjQwYTZiN2Y5YjRlODgzNDYzYWI0IiwiZXhwIjoxNjM5MTM4OTkwLCJhbSI6InRva2VuX3RvX3Rva2VuIiwianRpIjoiNmQwZjQzODhmNjI0NGJiYWE5OTdkOWRkMDc0MGNlNWIifQ.AG2yRz-WUO2pDEYMNdn3eHvdvt_pAVYySuulQdLjmyx3l4nFfbJwhpRIDNYHAx-_50YwL7rVBhrtIsNFD8vsKsHR",
+        "domain": "www.epicgames.com",
+        "path": "/",
+        "expires": 1639138991.711916,
+        "size": 486,
+        "httpOnly": true,
+        "secure": true,
+        "session": false
+    },
+    {
+        "name": "EPIC_LOCALE_COOKIE",
+        "value": "zh-Hans",
+        "domain": ".epicgames.com",
+        "path": "/",
+        "expires": -1,
+        "size": 25,
+        "httpOnly": false,
+        "secure": false,
+        "session": true
+    },
+    {
+        "name": "EPIC_SSO",
+        "value": "18490bd4f809405794408180922bc341",
+        "domain": ".epicgames.com",
+        "path": "/",
+        "expires": 1639052588.606094,
+        "size": 40,
+        "httpOnly": true,
+        "secure": true,
+        "session": false
+    },
+    {
+        "name": "EPIC_DEVICE",
+        "value": "060aca146c5b489393bf03a275694eb3",
+        "domain": ".epicgames.com",
+        "path": "/",
+        "expires": 1702095770.994279,
+        "size": 43,
+        "httpOnly": true,
+        "secure": true,
+        "session": false
+    },
+    {
+        "name": "_tald",
+        "value": "a2a4b03e-dc35-4a71-8ab2-6307ec28f1fe",
+        "domain": ".epicgames.com",
+        "path": "/",
+        "expires": 1670559776.76645,
+        "size": 41,
+        "httpOnly": false,
+        "secure": true,
+        "session": false
+    },
+    {
+        "name": "storeTokenExpires",
+        "value": "2021-12-09T12%3A23%3A06.520Z",
+        "domain": "www.epicgames.com",
+        "path": "/",
+        "expires": 1639052587.712027,
+        "size": 45,
+        "httpOnly": false,
+        "secure": false,
+        "session": false
+    },
+    {
+        "name": "EPIC_BEARER_TOKEN",
+        "value": "92b758c2dd924de6a45c75d0d687fa86",
+        "domain": ".epicgames.com",
+        "path": "/",
+        "expires": 1639052588.606217,
+        "size": 49,
+        "httpOnly": true,
+        "secure": true,
+        "session": false
+    },
+    {
+        "name": "EPIC_LOCALE_COOKIE",
+        "value": "zh-CN",
+        "domain": ".www.epicgames.com",
+        "path": "/",
+        "expires": -1,
+        "size": 23,
+        "httpOnly": false,
+        "secure": false,
+        "session": true
+    }
+]
