@@ -15,6 +15,7 @@ tb_ssl_list = model.SSLList()
 
 
 def list(page, limit, search_key, search_value):
+    now_time = datetime.datetime.now()
     res = []
     Q = {}
     if search_key and search_value:
@@ -23,7 +24,8 @@ def list(page, limit, search_key, search_value):
         else:
             Q[search_key] = int(search_value) if tools.isint(search_value) else search_value
     for f in tb_ssl_list.find(Q).skip((page - 1) * limit).limit(limit).sort('atime', -1):
-        f['rst_day'] = int((f.get('rst_time', datetime.datetime.now()) - datetime.datetime.now()).total_seconds() / 86400)
+        f['rst_day'] = int((f.get('rst_time', now_time) - now_time).total_seconds() / 86400)
+        f['ltime_str'] = tools.sec2hms((now_time - f.get('ltime', now_time)).total_seconds()) + '前'
         res.append(f)
     return res, tb_ssl_list.find(Q).count()
 
@@ -69,7 +71,8 @@ def ref_ssl_time(id):
     data = os.popen("echo | openssl s_client -servername %s  -connect %s:443 2>/dev/null | openssl x509 -noout -dates |grep 'After'| awk -F '=' '{print $2}'| awk -F ' +' '{print $1,$2,$4 }'" % (host, host)).read().strip()
     rst = datetime.datetime.strptime(data, '%b %d %Y')
     tb_ssl_list.update({'_id': ObjectId(id)}, {'$set': {
-        'rst_time': rst
+        'rst_time': rst,
+        'ltime': datetime.datetime.now(),
     }})
     return rst
 

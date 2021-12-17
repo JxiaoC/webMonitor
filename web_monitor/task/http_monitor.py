@@ -17,17 +17,6 @@ complete_count = 0
 lock = threading.RLock()
 
 
-def sec2hms(sec):
-    m, s = divmod(sec, 60)
-    h, m = divmod(m, 60)
-    if h > 0:
-        return "%02d时%02d分%02d秒" % (h, m, s)
-    elif m > 0:
-        return "%02d分%02d秒" % (m, s)
-    else:
-        return '%s秒' % s
-
-
 def monitor(id, info):
     global complete_count
     now_time = datetime.datetime.now()
@@ -70,7 +59,7 @@ def monitor(id, info):
     if run_time != -1 and info.get('con_error_num', 0) > 0:
         print('警报解除')
         U['warn_time'] = datetime.datetime(2020, 1, 1)
-        tools.send_server_jiang_msg('%s 可用性恢复' % name, '站点 %s 可用性故障已于%s后恢复, 共连续失败%s次' % (url, sec2hms(last_sec), info.get('con_error_num', 0)))
+        tools.send_server_jiang_msg('%s 可用性恢复' % name, '站点 %s 可用性故障已于%s后恢复, 共连续失败%s次' % (url, tools.sec2hms(last_sec), info.get('con_error_num', 0)))
 
     tb_web_list.update({'_id': id}, {'$set': U})
 

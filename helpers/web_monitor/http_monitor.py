@@ -15,6 +15,7 @@ tb_web_log = model.WebLog()
 
 
 def list(page, limit, search_key, search_value):
+    now_time = datetime.datetime.now()
     res = []
     Q = {}
     if search_key and search_value:
@@ -24,6 +25,7 @@ def list(page, limit, search_key, search_value):
             Q[search_key] = int(search_value) if tools.isint(search_value) else search_value
     for f in tb_web_list.find(Q).skip((page - 1) * limit).limit(limit).sort('atime', -1):
         f['status24'] = get_day_status(f['_id'])
+        f['ltime_str'] = tools.sec2hms((now_time - f.get('ltime', now_time)).total_seconds()) + '前'
         res.append(f)
     return res, tb_web_list.find(Q).count()
 
