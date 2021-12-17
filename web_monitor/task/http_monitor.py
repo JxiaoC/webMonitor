@@ -43,7 +43,7 @@ def monitor(id, info):
     })
 
     U = {
-        'ltime': now_time,
+        'ltime': datetime.datetime.now(),
         'con_error_num': con_error_num,
     }
 
