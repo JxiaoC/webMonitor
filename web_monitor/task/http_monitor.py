@@ -68,6 +68,10 @@ def monitor(id, info):
     lock.release()
 
 
+if cp.get_html('https://www.baidu.com') is None:
+    print('本地无网络访问, 跳过监控')
+    exit(0)
+
 for f in tb_web_list.find({'enable': True}):
     now_time = datetime.datetime.now()
     info = tb_web_list.find_by_id(f['_id'])
