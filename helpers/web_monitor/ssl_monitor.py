@@ -25,7 +25,9 @@ def list(page, limit, search_key, search_value):
             Q[search_key] = int(search_value) if tools.isint(search_value) else search_value
     for f in tb_ssl_list.find(Q).skip((page - 1) * limit).limit(limit).sort('atime', -1):
         f['rst_day'] = int((f.get('rst_time', now_time) - now_time).total_seconds() / 86400)
-        f['ltime_str'] = tools.sec2hms((now_time - f.get('ltime', now_time)).total_seconds()) + '前'
+        f['ltime_str'] = tools.sec2hms((now_time - f.get('ltime', now_time)).total_seconds())
+        if not f['ltime_str'].endswith('前'):
+            f['ltime_str'] += '前'
         res.append(f)
     return res, tb_ssl_list.find(Q).count()
 
