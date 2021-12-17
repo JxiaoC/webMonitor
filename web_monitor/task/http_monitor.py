@@ -60,7 +60,6 @@ def monitor(id, info):
         print('警报解除')
         U['warn_time'] = datetime.datetime(2020, 1, 1)
         tools.send_server_jiang_msg('%s 可用性恢复' % name, '站点 %s 可用性故障已于%s后恢复, 共连续失败%s次' % (url, tools.sec2hms(last_sec), info.get('con_error_num', 0)))
-    print(U, id)
     tb_web_list.update({'_id': id}, {'$set': U})
 
     lock.acquire()
