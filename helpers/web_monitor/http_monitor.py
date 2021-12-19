@@ -29,6 +29,7 @@ def list(page, limit, search_key, search_value):
         if not f['ltime_str'].endswith('前'):
             f['ltime_str'] += '前'
         res.append(f)
+    res.sort(key=lambda k: (k.get('status24', 0)))
     return res, tb_web_list.find(Q).count()
 
 
