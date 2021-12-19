@@ -48,7 +48,8 @@ def monitor(id, info):
     }
 
     last_sec = (datetime.datetime.now() - warn_time).total_seconds()
-    if con_error_num >= setting.get().get('max_error_num', 3):
+    max_error_num = setting.get().get('max_error_num', 3)
+    if con_error_num >= max_error_num:
         print('报警')
         if last_sec > setting.get().get('silence_time', 60) * 60:
             U['warn_time'] = datetime.datetime.now()
@@ -56,7 +57,7 @@ def monitor(id, info):
         else:
             print('沉默, 距离上一次警告过去了%ss' % last_sec)
 
-    if run_time != -1 and info.get('con_error_num', 0) > 0:
+    if run_time != -1 and info.get('con_error_num', 0) >= max_error_num:
         print('警报解除')
         U['warn_time'] = datetime.datetime(2020, 1, 1)
         tools.send_server_jiang_msg('%s 可用性恢复' % name, '站点 %s 可用性故障已于%s后恢复, 共连续失败%s次' % (url, tools.sec2hms(last_sec), info.get('con_error_num', 0)))
