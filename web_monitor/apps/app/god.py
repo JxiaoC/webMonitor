@@ -120,8 +120,9 @@ class HostExpireHandler(BaseHandler):
         id = self.get_argument('id', '')
         self._data = host_expire_monitor.remove(id)
 
-    def do_ref_all(self):
-        self._data = host_expire_monitor.ref_all()
+    def do_ref(self):
+        id = self.get_argument('id', '')
+        self._data = host_expire_monitor.ref_expire_time(id)
 
     def do_edit(self):
         id = self.get_argument('id', '')

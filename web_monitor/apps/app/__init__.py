@@ -7,6 +7,6 @@ register.register_group_urls('', [
     ('/', god.HomeHandler),
     ('/http_monitor/(add|list|remove|edit)', god.HttpMonitorHandler),
     ('/ssl_monitor/(add|list|remove|edit|ref_all)', god.SSLHandler),
-    ('/expire_monitor/(add|list|remove|edit|ref_all)', god.HostExpireHandler),
+    ('/expire_monitor/(add|list|remove|edit|ref)', god.HostExpireHandler),
     ('/setting/(info|send|save)', god.SettingHandler),
 ])
