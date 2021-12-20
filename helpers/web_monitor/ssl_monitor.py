@@ -3,6 +3,7 @@ import os
 import random
 import re
 import json
+import threading
 
 from bson import ObjectId
 
@@ -38,15 +39,17 @@ def add(name, host):
 
     if tb_ssl_list.find_one({'host': host}):
         raise ResponseMsg(-1, '已经存在相同域名的监控了')
-
-    tb_ssl_list.insert({
+    doc = {
+        '_id': ObjectId(),
         'name': name,
         'atime': datetime.datetime.now(),
         'ltime': datetime.datetime(2000, 1, 1),
         'host': host,
         'rst_time': datetime.datetime.now(),
         'enable': True,
-    })
+    }
+    tb_ssl_list.insert(doc)
+    threading.Thread(target=ref_ssl_time, args=(doc,)).start()
 
 
 def edit(id, key, value):
@@ -65,10 +68,15 @@ def edit(id, key, value):
     }})
 
 
-def ref_ssl_time(id):
-    ssl_info = tb_ssl_list.find_by_id(id)
-    if not ssl_info:
+def ref_ssl_time(data):
+    if ObjectId.is_valid(data):
+        ssl_info = tb_ssl_list.find_by_id(data)
+    elif isinstance(data, dict):
+        ssl_info = data
+    else:
         raise ResponseMsg(-1, '不存在的监控信息')
+
+    id = ssl_info.get('_id')
     host = ssl_info.get('host', '')
     data = os.popen("echo | openssl s_client -servername %s  -connect %s:443 2>/dev/null | openssl x509 -noout -dates |grep 'After'| awk -F '=' '{print $2}'| awk -F ' +' '{print $1,$2,$4 }'" % (host, host)).read().strip()
     rst = datetime.datetime.strptime(data, '%b %d %Y')
