@@ -1,4 +1,6 @@
 # -*- coding:utf-8 -*-
+import datetime
+import random
 import time
 
 import turbo.log
@@ -87,7 +89,8 @@ class SSLHandler(BaseHandler):
 
     def do_ref(self):
         id = self.get_argument('id', '')
-        self._data = ssl_monitor.ref_ssl_time(id)
+        now_time = datetime.datetime.now()
+        self._data = int((ssl_monitor.ref_ssl_time(id) - now_time).total_seconds() / 86400)
 
     def do_edit(self):
         id = self.get_argument('id', '')
@@ -126,7 +129,8 @@ class HostExpireHandler(BaseHandler):
 
     def do_ref(self):
         id = self.get_argument('id', '')
-        self._data = host_expire_monitor.ref_expire_time(id)
+        now_time = datetime.datetime.now()
+        self._data = int((host_expire_monitor.ref_expire_time(id) - now_time).total_seconds() / 86400)
 
     def do_edit(self):
         id = self.get_argument('id', '')
