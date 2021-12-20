@@ -11,3 +11,6 @@ _.ensure_index([('enable', -1), ('atime', -1)])
 
 _ = model.SSLList()
 _.ensure_index([('enable', -1), ('atime', -1)])
+
+_ = model.HostExpireList()
+_.ensure_index([('enable', -1), ('atime', -1)])

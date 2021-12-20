@@ -53,6 +53,28 @@ class SSLList(Model):
     }
 
 
+class HostExpireList(Model):
+    """
+    域名过期时间监控列表
+        'name': 监控名称
+        'atime': 添加时间
+        'ltime': 最后一次执行监控的时间
+        'host': 监控域名
+        'enable': 启用状态
+        'rst_time': 过期时间
+    """
+    name = 'host_expire_list'
+
+    field = {
+        'name':                 (str,           None),
+        'atime':                (datetime,      None),
+        'ltime':                (datetime,      None),
+        'host':                 (str,           None),
+        'enable':               (bool,          None),
+        'rst_time':             (datetime,      None),
+    }
+
+
 class WebLog(Model):
     """
     站点可用性日志
@@ -76,6 +98,7 @@ class Setting(Model):
     max_error_num: 连续超过N次错误即触发报警
     silence_time: 报警沉默时间(分钟)
     ssl_min_day: ssl证书有效期<=设置天数则触发报警
+    host_expire_min_day: 域名有效期<=设置天数则触发报警
     """
     name = 'setting'
 
@@ -84,4 +107,5 @@ class Setting(Model):
         'max_error_num':                     (int,           None),
         'silence_time':                      (int,           None),
         'ssl_min_day':                       (int,           None),
+        'host_expire_min_day':               (int,           None),
     }

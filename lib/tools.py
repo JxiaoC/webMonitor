@@ -80,6 +80,18 @@ def send_server_jiang_msg(title, desp, server_jiang_token=None):
     return False
 
 
+def get_host_expire(host):
+    url = 'http://swho.cn/queryDomain?domainName=%s&charset=utf-8&isUpdate=yes' % host
+    data = cp.get_html(url)
+    if not data:
+        raise ResponseMsg(-1, '获取失败')
+    data = json.loads(data)
+    if data.get('code', '0') != '100':
+        raise ResponseMsg(-1, '获取失败')
+    expire = datetime.datetime.strptime(data.get('expireDate', ''), '%Y-%m-%d %H:%M:%S')
+    return expire
+
+
 if __name__ == '__main__':
-    # get_bilibili_userinfo()
+    print(get_host_expire('jina.moe'))
     pass

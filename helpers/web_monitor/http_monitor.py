@@ -40,7 +40,7 @@ def get_day_status(id):
         count += 1
         success += 0 if data.get('value', 0) == -1 else 1
     if count == 0:
-        return 0
+        return 0, 0, 0
     return int(success / count * 100), count - success, success
 
 

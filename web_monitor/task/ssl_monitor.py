@@ -7,7 +7,7 @@ from models.web_monitor import model
 from lib import tools
 
 tb_ssl_list = model.SSLList()
-ssl_min_day = setting.get().get('ssl_min_day', '1')
+ssl_min_day = int(setting.get().get('ssl_min_day', '1'))
 
 for f in tb_ssl_list.find({'enable': True}):
     rst_time = ssl_monitor.ref_ssl_time(f['_id'])
