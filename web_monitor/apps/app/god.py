@@ -85,6 +85,10 @@ class SSLHandler(BaseHandler):
     def do_ref_all(self):
         self._data = ssl_monitor.ref_all()
 
+    def do_ref(self):
+        id = self.get_argument('id', '')
+        self._data = ssl_monitor.ref_ssl_time(id)
+
     def do_edit(self):
         id = self.get_argument('id', '')
         key = self.get_argument('key', '')
