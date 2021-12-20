@@ -26,6 +26,19 @@ def isint(a):
         return False
 
 
+def sec2hms(sec):
+    m, s = divmod(sec, 60)
+    h, m = divmod(m, 60)
+    if h >= 24:
+        return "一天以前"
+    if h > 0:
+        return "%02d时%02d分%02d秒" % (h, m, s)
+    elif m > 0:
+        return "%02d分%02d秒" % (m, s)
+    else:
+        return "%02d秒" % s
+
+
 def chinese2digits(uchars_chinese):
     total = 0
     r = 1  # 表示单位：个十百千...

@@ -17,6 +17,7 @@ def get():
         _ = {
             'max_error_num': 3,
             'silence_time': 60,
+            'ssl_min_day': 10,
             'server_jiang_token': '',
         }
         tb_setting.insert(_)
@@ -28,9 +29,10 @@ def send_server_jiang_test(server_jiang_token):
         raise ResponseMsg(-1, '发送失败, 请检查Token')
 
 
-def save(server_jiang_token, silence_time, max_error_num):
+def save(server_jiang_token, silence_time, max_error_num, ssl_min_day):
     tb_setting.update({}, {'$set': {
         'server_jiang_token': server_jiang_token.strip(),
         'silence_time': int(silence_time),
         'max_error_num': int(max_error_num),
+        'ssl_min_day': int(ssl_min_day),
     }})

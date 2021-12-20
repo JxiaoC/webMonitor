@@ -15,6 +15,7 @@ tb_web_log = model.WebLog()
 
 
 def list(page, limit, search_key, search_value):
+    now_time = datetime.datetime.now()
     res = []
     Q = {}
     if search_key and search_value:
@@ -23,8 +24,12 @@ def list(page, limit, search_key, search_value):
         else:
             Q[search_key] = int(search_value) if tools.isint(search_value) else search_value
     for f in tb_web_list.find(Q).skip((page - 1) * limit).limit(limit).sort('atime', -1):
-        f['status24'] = get_day_status(f['_id'])
+        f['status24'], f['status24_fail'], f['status24_success'] = get_day_status(f['_id'])
+        f['ltime_str'] = tools.sec2hms((now_time - f.get('ltime', now_time)).total_seconds())
+        if not f['ltime_str'].endswith('前'):
+            f['ltime_str'] += '前'
         res.append(f)
+    res.sort(key=lambda k: (k.get('status24', 0)))
     return res, tb_web_list.find(Q).count()
 
 
@@ -36,7 +41,7 @@ def get_day_status(id):
         success += 0 if data.get('value', 0) == -1 else 1
     if count == 0:
         return 0
-    return int(success / count * 100)
+    return int(success / count * 100), count - success, success
 
 
 def add(name, url, rate):
@@ -49,7 +54,7 @@ def add(name, url, rate):
     tb_web_list.insert({
         'name': name,
         'atime': datetime.datetime.now(),
-        'ltime': datetime.datetime.now(),
+        'ltime': datetime.datetime(2000, 1, 1),
         'warn_time': None,
         'url': url,
         'con_error_num': 0,

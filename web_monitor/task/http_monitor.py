@@ -17,17 +17,6 @@ complete_count = 0
 lock = threading.RLock()
 
 
-def sec2hms(sec):
-    m, s = divmod(sec, 60)
-    h, m = divmod(m, 60)
-    if h > 0:
-        return "%02d时%02d分%02d秒" % (h, m, s)
-    elif m > 0:
-        return "%02d分%02d秒" % (m, s)
-    else:
-        return '%s秒' % s
-
-
 def monitor(id, info):
     global complete_count
     now_time = datetime.datetime.now()
@@ -54,12 +43,13 @@ def monitor(id, info):
     })
 
     U = {
-        'ltime': now_time,
+        'ltime': datetime.datetime.now(),
         'con_error_num': con_error_num,
     }
 
     last_sec = (datetime.datetime.now() - warn_time).total_seconds()
-    if con_error_num >= setting.get().get('max_error_num', 3):
+    max_error_num = setting.get().get('max_error_num', 3)
+    if con_error_num >= max_error_num:
         print('报警')
         if last_sec > setting.get().get('silence_time', 60) * 60:
             U['warn_time'] = datetime.datetime.now()
@@ -67,11 +57,10 @@ def monitor(id, info):
         else:
             print('沉默, 距离上一次警告过去了%ss' % last_sec)
 
-    if run_time != -1 and info.get('con_error_num', 0) > 0:
+    if run_time != -1 and info.get('con_error_num', 0) >= max_error_num:
         print('警报解除')
         U['warn_time'] = datetime.datetime(2020, 1, 1)
-        tools.send_server_jiang_msg('%s 可用性恢复' % name, '站点 %s 可用性故障已于%s后恢复, 共连续失败%s次' % (url, sec2hms(last_sec), info.get('con_error_num', 0)))
-
+        tools.send_server_jiang_msg('%s 可用性恢复' % name, '站点 %s 可用性故障已于%s后恢复, 共连续失败%s次' % (url, tools.sec2hms(last_sec), info.get('con_error_num', 0)))
     tb_web_list.update({'_id': id}, {'$set': U})
 
     lock.acquire()
@@ -79,6 +68,10 @@ def monitor(id, info):
     complete_count += 1
     lock.release()
 
+
+if cp.get_html('https://www.baidu.com') is None:
+    print('本地无网络访问, 跳过监控')
+    exit(0)
 
 for f in tb_web_list.find({'enable': True}):
     now_time = datetime.datetime.now()
