@@ -102,9 +102,15 @@ def get_host_expire(host):
     data = json.loads(data)
     if data.get('code', 0) != 1:
         raise ResponseMsg(-1, '获取失败')
-    expire = re.search('Expiration Time[:：].{0,1}(\d{4}-\d{2}-\d{2})', data.get('detail', '')).group(1)
-    expire = datetime.datetime.strptime(expire, '%Y-%m-%d')
-    return expire
+    print(data.get('detail', ''))
+    search_data = re.search('Expiration Time[:：].{0,1}(\d{4}-\d{2}-\d{2})', data.get('detail', ''))
+    if not search_data:
+        search_data = re.search('Registry Expiry Date[:：].{0,1}(\d{4}-\d{2}-\d{2})', data.get('detail', ''))
+    if search_data:
+        expire = datetime.datetime.strptime(search_data.group(1), '%Y-%m-%d')
+        return expire
+    else:
+        raise ResponseMsg(-1, '无法获取到过期时间')
 
 
 if __name__ == '__main__':
