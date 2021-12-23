@@ -50,6 +50,7 @@ def add(name, host):
         'enable': True,
     }
     tb_host_list.insert(doc)
+    time.sleep(0.5)
     threading.Thread(target=ref_expire_time, args=(doc,)).start()
 
 

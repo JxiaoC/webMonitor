@@ -4,6 +4,7 @@ import random
 import re
 import json
 import threading
+import time
 
 from bson import ObjectId
 
@@ -49,6 +50,7 @@ def add(name, host):
         'enable': True,
     }
     tb_ssl_list.insert(doc)
+    time.sleep(0.5)
     threading.Thread(target=ref_ssl_time, args=(doc,)).start()
 
 

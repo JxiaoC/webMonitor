@@ -1,7 +1,9 @@
 import datetime
 import json
 import os
+import re
 import random
+import execjs
 from urllib.parse import quote
 
 from bson import ObjectId
@@ -9,7 +11,12 @@ from cPython import cPython as cp
 from helpers.web_monitor import setting
 from turbo.core.exceptions import ResponseMsg
 
-DEBUG = os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)), '__test__'))
+if os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)), '__test__')):
+    DEBUG = True
+    CHINAZJSPATH = './chinaz.js'
+else:
+    DEBUG = False
+    CHINAZJSPATH = '../lib/chinaz.js'
 
 common_used_numerals_tmp = {'零': 0, '一': 1, '二': 2, '两': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9,
                             '十': 10, '百': 100, '千': 1000, '万': 10000, '亿': 100000000}
@@ -81,17 +88,25 @@ def send_server_jiang_msg(title, desp, server_jiang_token=None):
 
 
 def get_host_expire(host):
-    url = 'http://swho.cn/queryDomain?domainName=%s&charset=utf-8&isUpdate=yes' % host
-    data = cp.get_html(url)
+    context = execjs.compile(open(CHINAZJSPATH, 'r').read())
+    token = context.call("generateHostKey", host)
+    url = 'http://whois.chinaz.com/getWhoisInfo.ashx'
+    data = cp.post_for_request(url, _data={
+        'token': token,
+        'host': host,
+        'isup': 'true',
+        'ws': '',
+    })
     if not data:
         raise ResponseMsg(-1, '获取失败')
     data = json.loads(data)
-    if data.get('code', '0') != '100':
+    if data.get('code', 0) != 1:
         raise ResponseMsg(-1, '获取失败')
-    expire = datetime.datetime.strptime(data.get('expireDate', ''), '%Y-%m-%d %H:%M:%S')
+    expire = re.search('Expiration Time[:：].{0,1}(\d{4}-\d{2}-\d{2})', data.get('detail', '')).group(1)
+    expire = datetime.datetime.strptime(expire, '%Y-%m-%d')
     return expire
 
 
 if __name__ == '__main__':
-    print(get_host_expire('jina.moe'))
+    print(get_host_expire('xiaoc.cn'))
     pass
