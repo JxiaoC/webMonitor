@@ -2,6 +2,7 @@ import datetime
 import random
 import re
 import json
+import base64
 
 from bson import ObjectId
 
@@ -34,22 +35,41 @@ def list(page, limit, search_key, search_value):
 
 
 def get_day_status(id):
+    id = ObjectId(id)
+    web_info = tb_web_list.find_by_id(id)
     datas = tb_web_log.find({'id': id, 'atime': {'$gte': datetime.datetime.now() - datetime.timedelta(days=1)}})
     success, count = 0, 0
     for data in datas:
         count += 1
-        success += 0 if data.get('value', 0) == -1 else 1
+        success += 0 if data.get('http_code', 200) not in web_info.get('allow_http_code', [200]) else 1
     if count == 0:
         return 0, 0, 0
     return int(success / count * 100), count - success, success
 
 
-def add(name, url, rate):
+def add(name, url, rate, method, header, data, allow_http_code, find_str, find_str_type):
     if tb_web_list.find_one({'name': name}):
         raise ResponseMsg(-1, '已经存在相同名称的监控了')
 
     if tb_web_list.find_one({'name': url}):
         raise ResponseMsg(-1, '已经存在相同url的监控了')
+
+    if method.upper() not in ['GET', 'POST']:
+        raise ResponseMsg(-1, 'method只支持get或post')
+
+    headers = {}
+    if data:
+        data = base64.decodebytes(data.encode()).decode()
+
+    if header:
+        header = base64.decodebytes(header.encode()).decode()
+
+        try:
+            for f in header.split('\n'):
+                if f.strip():
+                    headers[f.split(':')[0]] = f.replace(f.split(':')[0]+':', '').strip()
+        except:
+            raise ResponseMsg(-1, '错误的header')
 
     tb_web_list.insert({
         'name': name,
@@ -57,10 +77,47 @@ def add(name, url, rate):
         'ltime': datetime.datetime(2000, 1, 1),
         'warn_time': None,
         'url': url,
+        'method': method,
         'con_error_num': 0,
         'enable': True,
+        'header': json.dumps(headers),
+        'find_str': find_str,
+        'find_str_type': int(find_str_type),
+        'data': data,
+        'allow_http_code': [int(f) for f in allow_http_code.split(',') if f],
         'rate': int(rate),
     })
+
+
+def edit_all(id, rate, method, header, data, allow_http_code, find_str, find_str_type):
+    id = ObjectId(id)
+    web_info = tb_web_list.find_by_id(id)
+    if not web_info:
+        raise ResponseMsg(-1, '不存在的监控信息')
+
+    if data:
+        data = base64.decodebytes(data.encode()).decode()
+
+    headers = {}
+    if header:
+        header = base64.decodebytes(header.encode()).decode()
+
+        try:
+            for f in header.split('\n'):
+                if f.strip():
+                    headers[f.split(':')[0]] = f.replace(f.split(':')[0] + ':', '').strip()
+        except:
+            raise ResponseMsg(-1, '错误的header')
+
+    tb_web_list.update({'_id': id}, {'$set': {
+        'header': json.dumps(headers),
+        'find_str': find_str,
+        'find_str_type': int(find_str_type),
+        'data': data,
+        'method': method,
+        'allow_http_code': [int(f) for f in allow_http_code.split(',') if f],
+        'rate': int(rate),
+    }})
 
 
 def edit(id, key, value):
@@ -85,4 +142,4 @@ def remove(id):
 
 
 if __name__ == '__main__':
-    add('3333', 'https://www.baidu.com', 1)
+    pass

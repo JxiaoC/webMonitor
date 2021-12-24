@@ -42,8 +42,25 @@ class HttpMonitorHandler(BaseHandler):
     def do_add(self):
         name = self.get_argument('name', '')
         url = self.get_argument('url', '')
+        method = self.get_argument('method', '')
+        data = self.get_argument('data', '')
+        header = self.get_argument('header', '')
+        allow_http_code = self.get_argument('allow_http_code', '')
+        find_str = self.get_argument('find_str', '')
+        find_str_type = self.get_argument('find_str_type', '')
         rate = int(self.get_argument('rate', '1'))
-        self._data = http_monitor.add(name, url, rate)
+        self._data = http_monitor.add(name, url, rate, method, header, data, allow_http_code, find_str, find_str_type)
+
+    def do_edit_all(self):
+        id = self.get_argument('id', '')
+        method = self.get_argument('method', '')
+        data = self.get_argument('data', '')
+        header = self.get_argument('header', '')
+        allow_http_code = self.get_argument('allow_http_code', '')
+        find_str = self.get_argument('find_str', '')
+        find_str_type = self.get_argument('find_str_type', '')
+        rate = int(self.get_argument('rate', '1'))
+        self._data = http_monitor.edit_all(id, rate, method, header, data, allow_http_code, find_str, find_str_type)
 
     def do_remove(self):
         id = self.get_argument('id', '')

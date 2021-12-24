@@ -5,6 +5,7 @@ from models.web_monitor import model
 
 _ = model.WebLog()
 _.ensure_index([('id', -1), ('atime', -1)])
+_.ensure_index([('id', -1), ('http_code', -1), ('atime', -1)])
 
 _ = model.WebList()
 _.ensure_index([('enable', -1), ('atime', -1)])

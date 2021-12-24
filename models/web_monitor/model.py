@@ -16,6 +16,12 @@ class WebList(Model):
         'url': 监控url
         'enable': 启用状态
         'rate': 监控频率
+        'allow_http_code': 允许返回的http状态码
+        'header': 请求时发送的header
+        'data': 请求时发送的post数据
+        'method': 请求类型(GET/POST)
+        'find_str': 查询返回内容, 不为空则表示启用该功能
+        'find_str_type': 0=白名单模式, 1=黑名单模式, 白名单模式下, 如果查询未命中, 则失败; 黑名单模式下, 查询命中, 则失败
     """
     name = 'web_list'
 
@@ -28,6 +34,12 @@ class WebList(Model):
         'url':                  (str,           None),
         'enable':               (bool,          None),
         'rate':                 (int,           None),
+        'allow_http_code':      (list,         [200]),
+        'header':               (str,           None),
+        'data':                 (str,           None),
+        'method':               (str,           None),
+        'find_str':             (str,           None),
+        'find_str_type':        (int,           None),
     }
 
 
@@ -80,7 +92,8 @@ class WebLog(Model):
     站点可用性日志
         'id': 站点id
         'atime': 记录时间
-        'value': 可用性
+        'value': 延时(ms)
+        'http_code': 返回http_code, 600=超时, 601=未知错误, 602=白名单报错, 603=黑名单报错
     """
     name = 'web_log'
 
@@ -88,6 +101,7 @@ class WebLog(Model):
         'id':                   (ObjectId,      None),
         'atime':                (datetime,      None),
         'value':                (int,           None),
+        'http_code':            (int,           None),
     }
 
 

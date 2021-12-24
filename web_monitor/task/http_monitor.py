@@ -1,7 +1,10 @@
 # -*- coding:utf-8 -*-
 import datetime
+import json
 import threading
 import time
+
+import requests
 
 import realpath
 from cPython import cPython as cp
@@ -17,28 +20,55 @@ complete_count = 0
 lock = threading.RLock()
 
 
+def get_http_code_and_content(url, method, headers=None, data=None):
+    try:
+        response = requests.request(method.upper(), url, headers=headers, timeout=60, data=data)
+        return response.status_code, response.content.decode()
+    except Exception as e:
+        if str(e).find('Read timed out') > -1:
+            return 600, ''
+        else:
+            return 601, ''
+
+
 def monitor(id, info):
     global complete_count
     now_time = datetime.datetime.now()
     name = info.get('name', '')
     url = info.get('url', '')
+    allow_http_code = info.get('allow_http_code', [200])
+    header = json.loads(info.get('header', '{}'))
+    data = info.get('data', '')
+    find_str = info.get('find_str', '')
+    find_str_type = info.get('find_str_type', 0)
+    method = info.get('method', 'GET')
+    if not method:
+        method = 'GET'
     con_error_num = info.get('con_error_num', 0)
     warn_time = info.get('warn_time', datetime.datetime(2000, 1, 1))
     if warn_time is None:
         warn_time = datetime.datetime(2000, 1, 1)
 
     s_time = int(time.time() * 1000)
-    data = cp.get_html(url, maxError=1, timeout=60)
-    # data = None
-    if data is None:
-        run_time = -1
+    http_code, http_content = get_http_code_and_content(url, method=method, headers=header, data=data)
+    fail = http_code not in allow_http_code
+    if not fail and find_str:
+        if find_str_type == 0 and http_content.find(find_str) == -1:
+            fail = True
+            http_code = 602
+        elif find_str_type == 1 and http_content.find(find_str) > -1:
+            fail = True
+            http_code = 603
+
+    if fail:
         con_error_num += 1
     else:
         con_error_num = 0
-        run_time = int(time.time() * 1000 - s_time)
+    run_time = int(time.time() * 1000 - s_time)
     tb_web_log.insert({
         'id': id,
         'atime': now_time,
+        'http_code': http_code,
         'value': run_time
     })
 
@@ -64,7 +94,7 @@ def monitor(id, info):
     tb_web_list.update({'_id': id}, {'$set': U})
 
     lock.acquire()
-    print(url, 'run_time', run_time)
+    print(url, 'run_time', run_time, 'http_code', http_code)
     complete_count += 1
     lock.release()
 
