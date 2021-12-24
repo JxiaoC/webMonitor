@@ -7,7 +7,6 @@ import time
 import requests
 
 import realpath
-from cPython import cPython as cp
 from helpers.web_monitor import setting
 from models.web_monitor import model
 from lib import tools
@@ -20,10 +19,14 @@ complete_count = 0
 lock = threading.RLock()
 
 
-def get_http_code_and_content(url, method, headers=None, data=None):
+def get_http_code_and_content(url, method='GET', headers=None, data=None):
     try:
         response = requests.request(method.upper(), url, headers=headers, timeout=60, data=data)
-        return response.status_code, response.content.decode()
+        try:
+            content = response.content.decode()
+        except:
+            content = str(response.content)
+        return response.status_code, content
     except Exception as e:
         if str(e).find('Read timed out') > -1:
             return 600, ''
@@ -87,7 +90,7 @@ def monitor(id, info):
         else:
             print('沉默, 距离上一次警告过去了%ss' % last_sec)
 
-    if run_time != -1 and info.get('con_error_num', 0) >= max_error_num:
+    if not fail and info.get('con_error_num', 0) >= max_error_num:
         print('警报解除')
         U['warn_time'] = datetime.datetime(2020, 1, 1)
         tools.send_server_jiang_msg('%s 可用性恢复' % name, '站点 %s 可用性故障已于%s后恢复, 共连续失败%s次' % (url, tools.sec2hms(last_sec), info.get('con_error_num', 0)))
@@ -99,7 +102,7 @@ def monitor(id, info):
     lock.release()
 
 
-if cp.get_html('https://www.baidu.com') is None:
+if get_http_code_and_content('https://www.baidu.com')[0] != 200:
     print('本地无网络访问, 跳过监控')
     exit(0)
 
