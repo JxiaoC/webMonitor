@@ -5,7 +5,7 @@ import re
 import random
 import execjs
 from urllib.parse import quote
-
+from config import config
 from bson import ObjectId
 from cPython import cPython as cp
 from helpers.web_monitor import setting
@@ -13,10 +13,9 @@ from turbo.core.exceptions import ResponseMsg
 
 if os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)), '__test__')):
     DEBUG = True
-    CHINAZJSPATH = './chinaz.js'
 else:
     DEBUG = False
-    CHINAZJSPATH = '../lib/chinaz.js'
+CHINAZ_JS_PATH = '%s/lib/chinaz.js' % config.PROJECT_DIR
 
 common_used_numerals_tmp = {'零': 0, '一': 1, '二': 2, '两': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9,
                             '十': 10, '百': 100, '千': 1000, '万': 10000, '亿': 100000000}
@@ -88,7 +87,7 @@ def send_server_jiang_msg(title, desp, server_jiang_token=None):
 
 
 def get_host_expire(host):
-    context = execjs.compile(open(CHINAZJSPATH, 'r').read())
+    context = execjs.compile(open(CHINAZ_JS_PATH, 'r').read())
     token = context.call("generateHostKey", host)
     url = 'http://whois.chinaz.com/getWhoisInfo.ashx'
     data = cp.post_for_request(url, _data={
