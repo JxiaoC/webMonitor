@@ -26,12 +26,12 @@ def get_http_code_and_content(url, method='GET', headers=None, data=None):
             content = response.content.decode()
         except:
             content = str(response.content)
-        return response.status_code, content
+        return response.status_code, content, ''
     except Exception as e:
         if str(e).find('Read timed out') > -1:
-            return 600, ''
+            return 600, '', str(e)
         else:
-            return 601, ''
+            return 601, '', str(e)
 
 
 def monitor(id, info):
@@ -53,7 +53,7 @@ def monitor(id, info):
         warn_time = datetime.datetime(2000, 1, 1)
 
     s_time = int(time.time() * 1000)
-    http_code, http_content = get_http_code_and_content(url, method=method, headers=header, data=data)
+    http_code, http_content, err_data = get_http_code_and_content(url, method=method, headers=header, data=data)
     fail = http_code not in allow_http_code
     if not fail and find_str:
         if find_str_type == 0 and http_content.find(find_str) == -1:
@@ -72,7 +72,8 @@ def monitor(id, info):
         'id': id,
         'atime': now_time,
         'http_code': http_code,
-        'value': run_time
+        'value': run_time,
+        'err_data': err_data,
     })
 
     U = {

@@ -50,6 +50,7 @@ def get_day_status(id):
             'http_code': data.get('http_code', 200),
             'normal': False if data.get('http_code', 200) not in web_info.get('allow_http_code', [200]) else True,
             'delay': data.get('value', 0),
+            'err_data': data.get('err_data', ''),
             'atime': cp.datetime_2_unixtime(data.get('atime', 0)),
             'id': str(data.get('_id', '')),
         })

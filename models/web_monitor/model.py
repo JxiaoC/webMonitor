@@ -94,6 +94,7 @@ class WebLog(Model):
         'atime': 记录时间
         'value': 延时(ms)
         'http_code': 返回http_code, 600=超时, 601=未知错误, 602=白名单报错, 603=黑名单报错
+        'err_data': 发生错误时的错误信息
     """
     name = 'web_log'
 
@@ -102,6 +103,7 @@ class WebLog(Model):
         'atime':                (datetime,      None),
         'value':                (int,           None),
         'http_code':            (int,           None),
+        'err_data':             (str,           None),
     }
 
 
