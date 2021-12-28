@@ -40,7 +40,7 @@ def list(page, limit, search_key, search_value):
 def get_day_status(id):
     id = ObjectId(id)
     web_info = tb_web_list.find_by_id(id)
-    datas = tb_web_log.find({'id': id, 'atime': {'$gte': datetime.datetime.now() - datetime.timedelta(days=1)}}).sort('atime', -1).limit(100)
+    datas = tb_web_log.find({'id': id, 'atime': {'$gte': datetime.datetime.now() - datetime.timedelta(days=1)}}).sort('atime', -1).limit(150)
     res = []
     success, count = 0, 0
     for data in datas:
