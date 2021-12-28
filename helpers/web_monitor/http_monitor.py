@@ -25,7 +25,7 @@ def list(page, limit, search_key, search_value):
         else:
             Q[search_key] = int(search_value) if tools.isint(search_value) else search_value
     for f in tb_web_list.find(Q).skip((page - 1) * limit).limit(limit).sort('atime', -1):
-        f['status24'], f['status24_fail'], f['status24_success'] = get_day_status(f['_id'])
+        f['status24_list'], f['status24'] = get_day_status(f['_id'])
         f['ltime_str'] = tools.sec2hms((now_time - f.get('ltime', now_time)).total_seconds())
         if not f['ltime_str'].endswith('前'):
             f['ltime_str'] += '前'
@@ -37,14 +37,26 @@ def list(page, limit, search_key, search_value):
 def get_day_status(id):
     id = ObjectId(id)
     web_info = tb_web_list.find_by_id(id)
-    datas = tb_web_log.find({'id': id, 'atime': {'$gte': datetime.datetime.now() - datetime.timedelta(days=1)}})
+    datas = tb_web_log.find({'id': id, 'atime': {'$gte': datetime.datetime.now() - datetime.timedelta(days=1)}}).sort('_id', -1)
+    res = []
     success, count = 0, 0
     for data in datas:
         count += 1
         success += 0 if data.get('http_code', 200) not in web_info.get('allow_http_code', [200]) else 1
+        for f in range(30):
+            res.append({
+                'http_code': data.get('http_code', 200),
+                'normal': False if data.get('http_code', 200) not in web_info.get('allow_http_code', [200]) else True,
+                'delay': data.get('value', 0),
+                'atime': data.get('atime', 0),
+                'id': data.get('_id', ''),
+            })
     if count == 0:
-        return 0, 0, 0
-    return int(success / count * 100), count - success, success
+        return res, 0
+    return res, int(success / count * 100)
+    #     if count == 0:
+    #         return res, 0, 0
+    # return int(success / count * 100), count - success, success
 
 
 def add(name, url, rate, method, header, data, allow_http_code, find_str, find_str_type):
