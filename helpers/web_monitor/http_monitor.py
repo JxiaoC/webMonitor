@@ -1,15 +1,14 @@
-import datetime
-import random
-import re
-import json
 import base64
+import datetime
+import json
+import time
 
 from bson import ObjectId
-
-from models.web_monitor import model
 from turbo.core.exceptions import ResponseMsg
-from cPython import cPython as cp
+
 from lib import tools
+from models.web_monitor import model
+from cPython import cPython as cp
 
 tb_web_list = model.WebList()
 tb_web_log = model.WebLog()
@@ -29,6 +28,9 @@ def list(page, limit, search_key, search_value):
         f['ltime_str'] = tools.sec2hms((now_time - f.get('ltime', now_time)).total_seconds())
         if not f['ltime_str'].endswith('前'):
             f['ltime_str'] += '前'
+        f['_id'] = str(f['_id'])
+        f['atime'] = cp.datetime_2_unixtime(f['atime'])
+        f['ltime'] = cp.datetime_2_unixtime(f['ltime'])
         res.append(f)
     res.sort(key=lambda k: (k.get('status24', 0)))
     return res, tb_web_list.find(Q).count()
@@ -37,7 +39,7 @@ def list(page, limit, search_key, search_value):
 def get_day_status(id):
     id = ObjectId(id)
     web_info = tb_web_list.find_by_id(id)
-    datas = tb_web_log.find({'id': id, 'atime': {'$gte': datetime.datetime.now() - datetime.timedelta(days=1)}}).sort('_id', -1)
+    datas = tb_web_log.find({'id': id, 'atime': {'$gte': datetime.datetime.now() - datetime.timedelta(days=1)}}).sort('atime', -1)
     res = []
     success, count = 0, 0
     for data in datas:
@@ -47,8 +49,8 @@ def get_day_status(id):
             'http_code': data.get('http_code', 200),
             'normal': False if data.get('http_code', 200) not in web_info.get('allow_http_code', [200]) else True,
             'delay': data.get('value', 0),
-            'atime': data.get('atime', 0),
-            'id': data.get('_id', ''),
+            'atime': cp.datetime_2_unixtime(data.get('atime', 0)),
+            'id': str(data.get('_id', '')),
         })
     if count == 0:
         return res, 0

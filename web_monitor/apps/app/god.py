@@ -20,6 +20,23 @@ class HomeHandler(BaseHandler):
         )
 
 
+class HttpMonitorListHandler(BaseHandler):
+    def get(self):
+        page = int(self.get_argument('page', '1'))
+        limit = int(self.get_argument('limit', '9999'))
+        search_key = self.get_argument('search_key', '')
+        search_value = self.get_argument('search_value', '')
+        list, count = http_monitor.list(page, limit, search_key, search_value)
+        self.write({
+            'code': 0,
+            'msg': 'ok',
+            'res': {
+                'list': list,
+                'count': count,
+            }
+        })
+
+
 class HttpMonitorHandler(BaseHandler):
 
     def GET(self, type):
@@ -27,17 +44,6 @@ class HttpMonitorHandler(BaseHandler):
 
     def POST(self, type):
         self.GET(type)
-
-    def do_list(self):
-        page = int(self.get_argument('page', '1'))
-        limit = int(self.get_argument('limit', '9999'))
-        search_key = self.get_argument('search_key', '')
-        search_value = self.get_argument('search_value', '')
-        list, count = http_monitor.list(page, limit, search_key, search_value)
-        self._data = {
-            'list': list,
-            'count': count,
-        }
 
     def do_add(self):
         name = self.get_argument('name', '')
