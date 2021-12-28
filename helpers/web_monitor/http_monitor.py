@@ -43,14 +43,13 @@ def get_day_status(id):
     for data in datas:
         count += 1
         success += 0 if data.get('http_code', 200) not in web_info.get('allow_http_code', [200]) else 1
-        for f in range(30):
-            res.append({
-                'http_code': data.get('http_code', 200),
-                'normal': False if data.get('http_code', 200) not in web_info.get('allow_http_code', [200]) else True,
-                'delay': data.get('value', 0),
-                'atime': data.get('atime', 0),
-                'id': data.get('_id', ''),
-            })
+        res.append({
+            'http_code': data.get('http_code', 200),
+            'normal': False if data.get('http_code', 200) not in web_info.get('allow_http_code', [200]) else True,
+            'delay': data.get('value', 0),
+            'atime': data.get('atime', 0),
+            'id': data.get('_id', ''),
+        })
     if count == 0:
         return res, 0
     return res, int(success / count * 100)
