@@ -17,21 +17,28 @@ tb_web_log = model.WebLog()
 count = tb_web_list.count_documents({'enable': True})
 complete_count = 0
 lock = threading.RLock()
+max_error = 2
 
 
 def get_http_code_and_content(url, method='GET', headers=None, data=None):
-    try:
-        response = requests.request(method.upper(), url, headers=headers, timeout=60, data=data)
+    error = 0
+    while True:
         try:
-            content = response.content.decode()
-        except:
-            content = str(response.content)
-        return response.status_code, content, ''
-    except Exception as e:
-        if str(e).find('Read timed out') > -1:
-            return 600, '', str(e)
-        else:
-            return 601, '', str(e)
+            response = requests.request(method.upper(), url, headers=headers, timeout=20, data=data)
+            try:
+                content = response.content.decode()
+            except:
+                content = str(response.content)
+            return response.status_code, content, ''
+        except Exception as e:
+            error += 1
+            if error < max_error:
+                time.sleep(3)
+                continue
+            if str(e).find('Read timed out') > -1:
+                return 600, '', str(e)
+            else:
+                return 601, '', str(e)
 
 
 def monitor(id, info):
