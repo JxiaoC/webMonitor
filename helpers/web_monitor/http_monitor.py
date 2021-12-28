@@ -29,9 +29,9 @@ def list(page, limit, search_key, search_value):
         if not f['ltime_str'].endswith('前'):
             f['ltime_str'] += '前'
         f['_id'] = str(f['_id'])
-        f['atime'] = cp.datetime_2_unixtime(f.get('atime', datetime.datetime.now()))
-        f['ltime'] = cp.datetime_2_unixtime(f.get('ltime', datetime.datetime.now()))
-        f['warn_time'] = cp.datetime_2_unixtime(f.get('warn_time', datetime.datetime.now()))
+        f['atime'] = cp.datetime_2_unixtime(f.get('atime', datetime.datetime.now())) if f.get('atime', None) else 0
+        f['ltime'] = cp.datetime_2_unixtime(f.get('ltime', datetime.datetime.now())) if f.get('ltime', None) else 0
+        f['warn_time'] = cp.datetime_2_unixtime(f.get('warn_time', datetime.datetime.now())) if f.get('warn_time', None) else 0
         res.append(f)
     res.sort(key=lambda k: (k.get('status24', 0)))
     return res, tb_web_list.find(Q).count()
@@ -40,7 +40,7 @@ def list(page, limit, search_key, search_value):
 def get_day_status(id):
     id = ObjectId(id)
     web_info = tb_web_list.find_by_id(id)
-    datas = tb_web_log.find({'id': id, 'atime': {'$gte': datetime.datetime.now() - datetime.timedelta(days=1)}}).sort('atime', -1)
+    datas = tb_web_log.find({'id': id, 'atime': {'$gte': datetime.datetime.now() - datetime.timedelta(days=1)}}).sort('atime', -1).limit(100)
     res = []
     success, count = 0, 0
     for data in datas:
