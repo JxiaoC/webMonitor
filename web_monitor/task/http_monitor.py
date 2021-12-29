@@ -17,6 +17,7 @@ tb_web_log = model.WebLog()
 count = tb_web_list.count_documents({'enable': True})
 complete_count = 0
 lock = threading.RLock()
+max_error = 2
 
 
 def get_http_code_and_content(url, method='GET', headers=None, data=None):
