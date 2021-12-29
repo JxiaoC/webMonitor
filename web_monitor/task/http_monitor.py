@@ -21,7 +21,7 @@ lock = threading.RLock()
 
 def get_http_code_and_content(url, method='GET', headers=None, data=None):
     try:
-        response = requests.request(method.upper(), url, headers=headers, timeout=60, data=data)
+        response = requests.request(method.upper(), url, headers=headers, timeout=30, data=data)
         try:
             content = response.content.decode()
         except:

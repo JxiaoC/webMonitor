@@ -73,6 +73,8 @@ def add(name, url, rate, method, header, data, allow_http_code, find_str, find_s
         raise ResponseMsg(-1, 'method只支持get或post')
 
     headers = {}
+    if data == 'dW5kZWZpbmVk':
+        data = ''
     if data:
         data = base64.decodebytes(data.encode()).decode()
 
@@ -110,6 +112,8 @@ def edit_all(id, rate, method, header, data, allow_http_code, find_str, find_str
     if not web_info:
         raise ResponseMsg(-1, '不存在的监控信息')
 
+    if data == 'dW5kZWZpbmVk':
+        data = ''
     if data:
         data = base64.decodebytes(data.encode()).decode()
 
