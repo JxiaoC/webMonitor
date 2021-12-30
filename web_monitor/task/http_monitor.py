@@ -50,8 +50,11 @@ def monitor(id, info):
         method = 'GET'
     con_error_num = info.get('con_error_num', 0)
     warn_time = info.get('warn_time', datetime.datetime(2000, 1, 1))
+    push_warn_time = info.get('push_warn_time', datetime.datetime(2000, 1, 1))
     if warn_time is None:
         warn_time = datetime.datetime(2000, 1, 1)
+    if push_warn_time is None:
+        push_warn_time = datetime.datetime(2000, 1, 1)
 
     s_time = int(time.time() * 1000)
     http_code, http_content, err_data = get_http_code_and_content(url, method=method, headers=header, data=data)
@@ -82,20 +85,25 @@ def monitor(id, info):
         'con_error_num': con_error_num,
     }
 
-    last_sec = (datetime.datetime.now() - warn_time).total_seconds()
+    continue_sec = (datetime.datetime.now() - warn_time).total_seconds()
+    last_sec = (datetime.datetime.now() - push_warn_time).total_seconds()
     max_error_num = setting.get().get('max_error_num', 3)
     if con_error_num >= max_error_num:
         print('报警')
         if last_sec > setting.get().get('silence_time', 60) * 60:
-            U['warn_time'] = datetime.datetime.now()
-            tools.send_server_jiang_msg('%s 可用性报警' % name, '站点 %s 发生可用性报警, 已经连续%s次请求失败' % (url, con_error_num))
+            if not warn_time or warn_time <= datetime.datetime(2000, 1, 1):
+                # 第一次报警, 记录报警开始时间
+                U['warn_time'] = datetime.datetime.now()
+            U['push_warn_time'] = datetime.datetime.now()
+            tools.send_server_jiang_msg('%s 可用性报警' % name, '站点 %s 发生可用性报警, 已经连续%s次请求失败, 已持续%s' % (url, con_error_num, tools.sec2hms(continue_sec)))
         else:
             print('沉默, 距离上一次警告过去了%ss' % last_sec)
 
     if not fail and info.get('con_error_num', 0) >= max_error_num:
         print('警报解除')
-        U['warn_time'] = datetime.datetime(2020, 1, 1)
-        tools.send_server_jiang_msg('%s 可用性恢复' % name, '站点 %s 可用性故障已于%s后恢复, 共连续失败%s次' % (url, tools.sec2hms(last_sec), info.get('con_error_num', 0)))
+        U['warn_time'] = datetime.datetime(2000, 1, 1)
+        U['push_warn_time'] = datetime.datetime(2000, 1, 1)
+        tools.send_server_jiang_msg('%s 可用性恢复' % name, '站点 %s 可用性故障已于%s后恢复, 共连续失败%s次' % (url, tools.sec2hms(continue_sec), info.get('con_error_num', 0)))
     tb_web_list.update({'_id': id}, {'$set': U})
 
     lock.acquire()

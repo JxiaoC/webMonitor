@@ -35,8 +35,11 @@ def isint(a):
 def sec2hms(sec):
     m, s = divmod(sec, 60)
     h, m = divmod(m, 60)
-    if h >= 24:
-        return "一天以前"
+    d, h = divmod(h, 24)
+    if h >= 24 * 7:
+        return "一周以前"
+    if d > 0:
+        return "%02d天%02d时%02d分%02d秒" % (d, h, m, s)
     if h > 0:
         return "%02d时%02d分%02d秒" % (h, m, s)
     elif m > 0:
@@ -113,5 +116,6 @@ def get_host_expire(host):
 
 
 if __name__ == '__main__':
-    print(get_host_expire('xiaoc.cn'))
+    # print(get_host_expire('xiaoc.cn'))
+    print(sec2hms(97402))
     pass

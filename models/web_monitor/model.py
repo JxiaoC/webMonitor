@@ -12,6 +12,7 @@ class WebList(Model):
         'atime': 添加时间
         'ltime': 最后一次执行监控的时间
         'warn_time': 报警时间
+        'push_warn_time': 最后一次推送报警的时间
         'con_error_num': 连续错误次数
         'url': 监控url
         'enable': 启用状态
@@ -30,6 +31,7 @@ class WebList(Model):
         'atime':                (datetime,      None),
         'ltime':                (datetime,      None),
         'warn_time':            (datetime,      None),
+        'push_warn_time':       (datetime,      None),
         'con_error_num':        (int,           None),
         'url':                  (str,           None),
         'enable':               (bool,          None),
