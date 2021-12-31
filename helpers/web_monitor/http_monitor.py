@@ -32,6 +32,7 @@ def list(page, limit, search_key, search_value):
         f['atime'] = cp.datetime_2_unixtime(f.get('atime', datetime.datetime.now())) if f.get('atime', None) else 0
         f['ltime'] = cp.datetime_2_unixtime(f.get('ltime', datetime.datetime.now())) if f.get('ltime', None) else 0
         f['warn_time'] = cp.datetime_2_unixtime(f.get('warn_time', datetime.datetime.now())) if f.get('warn_time', None) else 0
+        f['push_warn_time'] = cp.datetime_2_unixtime(f.get('push_warn_time', datetime.datetime.now())) if f.get('push_warn_time', None) else 0
         res.append(f)
     res.sort(key=lambda k: (k.get('status24', 0)))
     return res, tb_web_list.find(Q).count()
