@@ -36,7 +36,7 @@ def sec2hms(sec):
     m, s = divmod(sec, 60)
     h, m = divmod(m, 60)
     d, h = divmod(h, 24)
-    if h >= 24 * 7:
+    if d >= 7:
         return "一周以前"
     if d > 0:
         return "%02d天%02d时%02d分%02d秒" % (d, h, m, s)
@@ -117,5 +117,5 @@ def get_host_expire(host):
 
 if __name__ == '__main__':
     # print(get_host_expire('xiaoc.cn'))
-    print(sec2hms(97402))
+    print(sec2hms(597402))
     pass
