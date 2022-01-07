@@ -54,8 +54,23 @@ class HttpMonitorHandler(BaseHandler):
         allow_http_code = self.get_argument('allow_http_code', '')
         find_str = self.get_argument('find_str', '')
         find_str_type = self.get_argument('find_str_type', '')
+        callback_url = self.get_argument('callback_url', '')
         rate = int(self.get_argument('rate', '1'))
-        self._data = http_monitor.add(name, url, rate, method, header, data, allow_http_code, find_str, find_str_type)
+        self._data = http_monitor.add(name, url, rate, method, header, data, allow_http_code, find_str, find_str_type, callback_url)
+        self.GET(type)
+
+    def do_test(self):
+        name = self.get_argument('name', '')
+        url = self.get_argument('url', '')
+        method = self.get_argument('method', '')
+        data = self.get_argument('data', '')
+        header = self.get_argument('header', '')
+        allow_http_code = self.get_argument('allow_http_code', '')
+        find_str = self.get_argument('find_str', '')
+        find_str_type = self.get_argument('find_str_type', '')
+        callback_url = self.get_argument('callback_url', '')
+        rate = int(self.get_argument('rate', '1'))
+        self._data = http_monitor.test(name, url, rate, method, header, data, allow_http_code, find_str, find_str_type, callback_url)
 
     def do_edit_all(self):
         id = self.get_argument('id', '')
@@ -65,8 +80,14 @@ class HttpMonitorHandler(BaseHandler):
         allow_http_code = self.get_argument('allow_http_code', '')
         find_str = self.get_argument('find_str', '')
         find_str_type = self.get_argument('find_str_type', '')
+        callback_url = self.get_argument('callback_url', '')
         rate = int(self.get_argument('rate', '1'))
-        self._data = http_monitor.edit_all(id, rate, method, header, data, allow_http_code, find_str, find_str_type)
+        self._data = http_monitor.edit_all(id, rate, method, header, data, allow_http_code, find_str, find_str_type, callback_url)
+
+    def do_callback_test(self):
+        callback_url = self.get_argument('callback_url', '')
+        status = self.get_argument('status', '')
+        self._data = http_monitor.callback_test(callback_url, status)
 
     def do_remove(self):
         id = self.get_argument('id', '')

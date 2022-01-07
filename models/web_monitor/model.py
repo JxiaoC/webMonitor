@@ -23,6 +23,7 @@ class WebList(Model):
         'method': 请求类型(GET/POST)
         'find_str': 查询返回内容, 不为空则表示启用该功能
         'find_str_type': 0=白名单模式, 1=黑名单模式, 白名单模式下, 如果查询未命中, 则失败; 黑名单模式下, 查询命中, 则失败
+        'callback_url': 回调地址
     """
     name = 'web_list'
 
@@ -42,6 +43,7 @@ class WebList(Model):
         'method':               (str,           None),
         'find_str':             (str,           None),
         'find_str_type':        (int,           None),
+        'callback_url':         (str,           None),
     }
 
 
@@ -126,4 +128,28 @@ class Setting(Model):
         'silence_time':                      (int,           None),
         'ssl_min_day':                       (int,           None),
         'host_expire_min_day':               (int,           None),
+    }
+
+
+class CallbackLog(Model):
+    """
+    回调日志
+        'atime': 添加时间
+        'status': 回调状态(success, fail)
+        'callback_url': 回调url
+        'rid': 所属监控id
+        'enable': 当前启用状态(已完成或者最大错误次数超过3次时, 将会自动设置为false
+        'complete': 是否已完成
+        'error_num': 错误次数
+    """
+    name = 'callback_log'
+
+    field = {
+        'atime':               (datetime,           None),
+        'status':              (str,                None),
+        'callback_url':        (str,                None),
+        'rid':                 (ObjectId,           None),
+        'enable':             (bool,               True),
+        'complete':            (bool,              False),
+        'error_num':           (int,                   0),
     }

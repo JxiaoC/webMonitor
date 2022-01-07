@@ -2,6 +2,7 @@ import base64
 import datetime
 import json
 import time
+from web_monitor.task import http_monitor
 
 from bson import ObjectId
 from turbo.core.exceptions import ResponseMsg
@@ -63,7 +64,20 @@ def get_day_status(id):
     # return int(success / count * 100), count - success, success
 
 
-def add(name, url, rate, method, header, data, allow_http_code, find_str, find_str_type):
+def callback_test(callback_url, status):
+    try:
+        html = cp.post_for_request(callback_url, _data={
+            'status': status,
+        })
+        if html != 'ok':
+            raise ResponseMsg(-1, '返回内容预期为"ok", 实际为"%s"' % (html[:60] + '......' if len(html) > 60 else html))
+    except Exception as e:
+        raise ResponseMsg(-1, '请求http时发错误, %s' % e)
+        pass
+    pass
+
+
+def add(name, url, rate, method, header, data, allow_http_code, find_str, find_str_type, callback_url):
     if tb_web_list.find_one({'name': name}):
         raise ResponseMsg(-1, '已经存在相同名称的监控了')
 
@@ -102,12 +116,54 @@ def add(name, url, rate, method, header, data, allow_http_code, find_str, find_s
         'find_str': find_str,
         'find_str_type': int(find_str_type),
         'data': data,
+        'callback_url': callback_url,
         'allow_http_code': [int(f) for f in allow_http_code.split(',') if f],
         'rate': int(rate),
     })
 
 
-def edit_all(id, rate, method, header, data, allow_http_code, find_str, find_str_type):
+def test(name, url, rate, method, header, data, allow_http_code, find_str, find_str_type, callback_url):
+    headers = {}
+    if data == 'dW5kZWZpbmVk':
+        data = ''
+    if data:
+        data = base64.decodebytes(data.encode()).decode()
+
+    if header:
+        header = base64.decodebytes(header.encode()).decode()
+
+        try:
+            for f in header.split('\n'):
+                if f.strip():
+                    headers[f.split(':')[0]] = f.replace(f.split(':')[0] + ':', '').strip()
+        except:
+            raise ResponseMsg(-1, '错误的header')
+
+    test_data = {
+        'name': name,
+        'atime': datetime.datetime.now(),
+        'ltime': datetime.datetime(2000, 1, 1),
+        'warn_time': None,
+        'url': url,
+        'method': method,
+        'con_error_num': 0,
+        'enable': True,
+        'header': json.dumps(headers),
+        'find_str': find_str,
+        'find_str_type': int(find_str_type),
+        'data': data,
+        'callback_url': callback_url,
+        'allow_http_code': [int(f) for f in allow_http_code.split(',') if f],
+        'rate': int(rate),
+    }
+    fail, http_code, run_time, err_data = http_monitor.monitor(None, test_data, True)
+    if fail:
+        raise ResponseMsg(-1, '可用性警告, 耗时%sms, 返回http_code:%s, 错误信息:%s' % (run_time, http_code, err_data))
+    else:
+        raise ResponseMsg(0, '可用性正常, 耗时%sms, 返回http_code:%s' % (run_time, http_code))
+
+
+def edit_all(id, rate, method, header, data, allow_http_code, find_str, find_str_type, callback_url):
     id = ObjectId(id)
     web_info = tb_web_list.find_by_id(id)
     if not web_info:
@@ -135,6 +191,7 @@ def edit_all(id, rate, method, header, data, allow_http_code, find_str, find_str
         'find_str_type': int(find_str_type),
         'data': data,
         'method': method,
+        'callback_url': callback_url,
         'allow_http_code': [int(f) for f in allow_http_code.split(',') if f],
         'rate': int(rate),
     }})

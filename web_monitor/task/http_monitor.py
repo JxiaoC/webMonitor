@@ -5,11 +5,14 @@ import threading
 import time
 
 import requests
-
-import realpath
+try:
+    import realpath
+except:
+    pass
 from helpers.web_monitor import setting
 from models.web_monitor import model
 from lib import tools
+from web_monitor.task import callback
 
 tb_web_list = model.WebList()
 tb_web_log = model.WebLog()
@@ -35,7 +38,7 @@ def get_http_code_and_content(url, method='GET', headers=None, data=None):
             return 601, '', str(e)
 
 
-def monitor(id, info):
+def monitor(id, info, test=False):
     global complete_count
     now_time = datetime.datetime.now()
     name = info.get('name', '')
@@ -48,6 +51,7 @@ def monitor(id, info):
     method = info.get('method', 'GET')
     if not method:
         method = 'GET'
+    callback_url = info.get('callback_url', '')
     con_error_num = info.get('con_error_num', 0)
     warn_time = info.get('warn_time', datetime.datetime(2000, 1, 1))
     push_warn_time = info.get('push_warn_time', datetime.datetime(2000, 1, 1))
@@ -72,6 +76,8 @@ def monitor(id, info):
     else:
         con_error_num = 0
     run_time = int(time.time() * 1000 - s_time)
+    if test:
+        return fail, http_code, run_time, err_data
     tb_web_log.insert({
         'id': id,
         'atime': now_time,
@@ -91,19 +97,23 @@ def monitor(id, info):
     if con_error_num >= max_error_num:
         print('报警')
         if last_sec > setting.get().get('silence_time', 60) * 60:
-            if not warn_time or warn_time <= datetime.datetime(2000, 1, 1):
+            if con_error_num == max_error_num:
                 # 第一次报警, 记录报警开始时间
                 U['warn_time'] = datetime.datetime.now()
             U['push_warn_time'] = datetime.datetime.now()
+
+            continue_sec = (datetime.datetime.now() - U.get('warn_time', warn_time)).total_seconds()
             tools.send_server_jiang_msg('%s 可用性报警' % name, '站点 %s 发生可用性报警, 已经连续%s次请求失败, 已持续%s' % (url, con_error_num, tools.sec2hms(continue_sec)))
         else:
             print('沉默, 距离上一次警告过去了%ss' % last_sec)
+        callback.new_callback(id, callback_url, False)
 
     if not fail and info.get('con_error_num', 0) >= max_error_num:
         print('警报解除')
         U['warn_time'] = datetime.datetime(2000, 1, 1)
         U['push_warn_time'] = datetime.datetime(2000, 1, 1)
         tools.send_server_jiang_msg('%s 可用性恢复' % name, '站点 %s 可用性故障已于%s后恢复, 共连续失败%s次' % (url, tools.sec2hms(continue_sec), info.get('con_error_num', 0)))
+        callback.new_callback(id, callback_url, True)
     tb_web_list.update({'_id': id}, {'$set': U})
 
     lock.acquire()
@@ -121,10 +131,10 @@ for f in tb_web_list.find({'enable': True}):
     info = tb_web_list.find_by_id(f['_id'])
     ltime = info.get('ltime', now_time)
     rate = info.get('rate', 1)
-    if (now_time - ltime).total_seconds() < rate * 60:
-        print(f['_id'], '距离上一次监控时间不足%s分钟' % rate)
-        complete_count += 1
-        continue
+    # if (now_time - ltime).total_seconds() < rate * 60:
+    #     print(f['_id'], '距离上一次监控时间不足%s分钟' % rate)
+    #     complete_count += 1
+    #     continue
     threading.Thread(target=monitor, args=(f['_id'], info)).start()
     time.sleep(0.5)
 
