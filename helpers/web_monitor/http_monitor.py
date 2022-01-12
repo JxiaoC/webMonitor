@@ -37,6 +37,7 @@ def list(page, limit, search_key, search_value):
         res.append(f)
     res.sort(key=lambda k: (k.get('ave_delay', 0)), reverse=True)
     res.sort(key=lambda k: (k.get('status24', 0)))
+    res.sort(key=lambda k: (k.get('enable', False)), reverse=True)
     return res, tb_web_list.find(Q).count()
 
 
