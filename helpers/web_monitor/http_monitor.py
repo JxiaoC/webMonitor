@@ -25,7 +25,7 @@ def list(page, limit, search_key, search_value):
         else:
             Q[search_key] = int(search_value) if tools.isint(search_value) else search_value
     for f in tb_web_list.find(Q).skip((page - 1) * limit).limit(limit).sort('atime', -1):
-        f['status24_list'], f['status24'] = get_day_status(f['_id'])
+        f['status24_list'], f['status24'], f['ave_delay'] = get_day_status(f['_id'])
         f['ltime_str'] = tools.sec2hms((now_time - f.get('ltime', now_time)).total_seconds())
         if not f['ltime_str'].endswith('前'):
             f['ltime_str'] += '前'
@@ -35,6 +35,7 @@ def list(page, limit, search_key, search_value):
         f['warn_time'] = cp.datetime_2_unixtime(f.get('warn_time', datetime.datetime.now())) if f.get('warn_time', None) else 0
         f['push_warn_time'] = cp.datetime_2_unixtime(f.get('push_warn_time', datetime.datetime.now())) if f.get('push_warn_time', None) else 0
         res.append(f)
+    res.sort(key=lambda k: (k.get('ave_delay', 0)), reverse=True)
     res.sort(key=lambda k: (k.get('status24', 0)))
     return res, tb_web_list.find(Q).count()
 
@@ -44,7 +45,7 @@ def get_day_status(id):
     web_info = tb_web_list.find_by_id(id)
     datas = tb_web_log.find({'id': id, 'atime': {'$gte': datetime.datetime.now() - datetime.timedelta(days=1)}}).sort('atime', -1).limit(100)
     res = []
-    success, count = 0, 0
+    success, count, ave_delay = 0, 0, 0
     for data in datas:
         count += 1
         success += 0 if data.get('http_code', 200) not in web_info.get('allow_http_code', [200]) else 1
@@ -56,12 +57,10 @@ def get_day_status(id):
             'atime': cp.datetime_2_unixtime(data.get('atime', 0)),
             'id': str(data.get('_id', '')),
         })
+        ave_delay += data.get('value', 0)
     if count == 0:
-        return res, 0
-    return res, int(success / count * 100)
-    #     if count == 0:
-    #         return res, 0, 0
-    # return int(success / count * 100), count - success, success
+        return res, 0, 0
+    return res, int(success / count * 100), int(ave_delay / count)
 
 
 def callback_test(callback_url, status):
