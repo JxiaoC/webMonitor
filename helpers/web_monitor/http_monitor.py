@@ -81,7 +81,7 @@ def add(name, url, rate, method, header, data, allow_http_code, find_str, find_s
     if tb_web_list.find_one({'name': name}):
         raise ResponseMsg(-1, '已经存在相同名称的监控了')
 
-    if tb_web_list.find_one({'name': url}):
+    if tb_web_list.find_one({'url': url}):
         raise ResponseMsg(-1, '已经存在相同url的监控了')
 
     if method.upper() not in ['GET', 'POST']:
