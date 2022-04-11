@@ -52,14 +52,14 @@ def lists(page, limit, search_key, search_value):
         _ = []
         pass_keys = []
         for ff in f['disk']:
-            if ff.get('name', 0) in pass_keys:
+            if ff.get('mount_name', '') in pass_keys:
                 continue
             _.append({
                 'name': ff.get('mount_name', ''),
                 'value': ff.get('value', 0),
                 'total_value': ff.get('total_value', 0),
             })
-            pass_keys.append(ff.get('name', 0))
+            pass_keys.append(ff.get('mount_name', ''))
         f['disk'] = _
         res.append(f)
 
