@@ -2,26 +2,49 @@
 import requests
 import turbo.log
 from .base import BaseHandler
-import urllib.parse
+from helpers.web_monitor import server_monitor
 
 logger = turbo.log.getLogger(__file__)
 
-channel = '3e5a6b56d8c70441'  # 讯飞提供的渠道号
-column_id = "242811"  # 科大讯飞提供的栏目id
 
-base_url = "http://api.kuyinyun.com/p/"
-
-
-class ShareHandler(BaseHandler):
-    def get(self):
-        self.render('share.html')
-
-
-class FissionHandler(BaseHandler):
-    def GET(self, type):
+class ServerReportHandler(BaseHandler):
+    def POST(self, type):
         self.route(type)
 
-    def do_help_list(self):
-        token = self.get_argument('token', '')
-        limit = int(self.get_argument('limit', '10'))
-        self._data = fission.get_help_list(token, limit)
+    def do_cpu(self):
+        id = self.get_argument('id', '')
+        value = self.get_argument('value', '')
+        server_monitor.add_cpu_log(id, value)
+
+    def do_load(self):
+        id = self.get_argument('id', '')
+        value = self.get_argument('value', '')
+        server_monitor.add_load_log(id, value)
+
+    def do_memory(self):
+        id = self.get_argument('id', '')
+        value = self.get_argument('value', '')
+        total_value = self.get_argument('total_value', '')
+        server_monitor.add_memory_log(id, value, total_value)
+
+    def do_disk(self):
+        id = self.get_argument('id', '')
+        disk_name = self.get_argument('disk_name', '')
+        mount_name = self.get_argument('mount_name', '')
+        value = self.get_argument('value', '')
+        total_value = self.get_argument('total_value', '')
+        server_monitor.add_disk_log(id, disk_name, mount_name, value, total_value)
+
+    def do_network(self):
+        id = self.get_argument('id', '')
+        time = self.get_argument('time', '')
+        type = self.get_argument('type', '')
+        value = self.get_argument('value', '')
+        server_monitor.add_network_log(id, time, type, value)
+
+    def do_all(self):
+        data = self.get_argument('data')
+        ip = self.request.remote_ip
+        server_monitor.add_all(ip, data)
+        pass
+

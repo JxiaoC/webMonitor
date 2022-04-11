@@ -153,3 +153,110 @@ class CallbackLog(Model):
         'complete':            (bool,              False),
         'error_num':           (int,                   0),
     }
+
+
+class ServerList(Model):
+    """
+    服务器监控列表
+        'atime': 添加时间
+        'utime': 修改时间(编辑/数据上报时更新)
+    """
+    name = 'server_list'
+
+    field = {
+        'atime':               (datetime,           None),
+        'utime':               (datetime,           None),
+        'name':                (str,                None),
+        'ip':                  (str,                None),
+        'desc':                (str,                None),
+    }
+
+
+class ServerCPULog(Model):
+    """
+    服务器监控CPU日志列表
+        'atime': 添加时间
+        'id': 服务器id
+        'value': 当前占用cpu(百分比)
+    """
+    name = 'server_cpu_log'
+
+    field = {
+        'atime':               (datetime,           None),
+        'id':                  (ObjectId,           None),
+        'value':               (float,                 0),
+    }
+
+
+class ServerLoadLog(Model):
+    """
+    服务器监控负载日志列表
+        'atime': 添加时间
+        'id': 服务器id
+        'value': 负载(1分钟,5分钟,15分钟)(1.5,1.0,0.8)
+    """
+    name = 'server_load_log'
+
+    field = {
+        'atime':               (datetime,           None),
+        'id':                  (ObjectId,           None),
+        'value':               (str,                  ''),
+    }
+
+
+class ServerMemoryLog(Model):
+    """
+    服务器监控内存日志列表
+        'atime': 添加时间
+        'id': 服务器id
+        'value': 当前占用内存(字节)
+        'total_value': 总内存(字节)
+    """
+    name = 'server_memory_log'
+
+    field = {
+        'atime':               (datetime,           None),
+        'id':                  (ObjectId,           None),
+        'value':               (int,                   0),
+        'total_value':         (int,                   0),
+    }
+
+
+class ServerDiskLog(Model):
+    """
+    服务器监控硬盘日志列表
+        'atime': 添加时间
+        'id': 服务器id
+        'disk_name': 硬盘名称
+        'mount_name': 硬盘挂载目录名称
+        'value': 当前使用容量(字节)
+        'total_value': 总容量(字节)
+    """
+    name = 'server_disk_log'
+
+    field = {
+        'atime':               (datetime,           None),
+        'id':                  (ObjectId,           None),
+        'disk_name':           (str,                  ''),
+        'mount_name':          (str,                  ''),
+        'value':               (int,                   0),
+        'total_value':         (int,                   0),
+    }
+
+
+class ServerNetworkLog(Model):
+    """
+    服务器监控流量使用日志列表(只计算流出)
+        'atime': 添加时间
+        'id': 服务器id
+        'time': 记录名称(2022011501, 年月日时)
+        'value': 使用流量(字节)
+    """
+    name = 'server_network_log'
+
+    field = {
+        'atime':               (datetime,           None),
+        'id':                  (ObjectId,           None),
+        'time':                (int,                   0),
+        'value':               (int,                   0),
+    }

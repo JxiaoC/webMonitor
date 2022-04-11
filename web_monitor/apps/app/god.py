@@ -5,7 +5,7 @@ import time
 
 import turbo.log
 
-from helpers.web_monitor import http_monitor, setting, ssl_monitor, host_expire_monitor
+from helpers.web_monitor import http_monitor, setting, ssl_monitor, host_expire_monitor, server_monitor
 from lib import tools
 from .base import BaseHandler
 
@@ -206,3 +206,39 @@ class SettingHandler(BaseHandler):
         ssl_min_day = self.get_argument('ssl_min_day', '')
         self._data = setting.save(server_jiang_token, silence_time, max_error_num, ssl_min_day, host_expire_min_day)
 
+
+class ServerHandler(BaseHandler):
+
+    def GET(self, type):
+        self.route(type)
+
+    def POST(self, type):
+        self.GET(type)
+
+    def do_list(self):
+        page = int(self.get_argument('page', '1'))
+        limit = int(self.get_argument('limit', '9999'))
+        search_key = self.get_argument('search_key', '')
+        search_value = self.get_argument('search_value', '')
+        list, count = server_monitor.lists(page, limit, search_key, search_value)
+        self._data = {
+            'list': list,
+            'count': count,
+        }
+
+    def do_add(self):
+        name = self.get_argument('name', '')
+        ip = self.get_argument('ip', '')
+        desc = self.get_argument('desc', '')
+        self._data = server_monitor.add(name, ip, desc)
+
+    def do_remove(self):
+        id = self.get_argument('id', '')
+        self._data = server_monitor.remove(id)
+
+    def do_edit(self):
+        id = self.get_argument('id', '')
+        name = self.get_argument('name', '')
+        ip = self.get_argument('ip', '')
+        desc = self.get_argument('desc', '')
+        self._data = server_monitor.edit(id, name, ip, desc)
