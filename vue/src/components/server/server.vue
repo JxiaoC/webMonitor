@@ -37,12 +37,11 @@
     </el-dialog>
 
     <el-row class="header">
-      <el-col :span="3"><div>监控名称</div></el-col>
+      <el-col :span="4"><div>监控名称</div></el-col>
       <el-col :span="2"><div>IP地址</div></el-col>
       <el-col :span="2"><div>CPU</div></el-col>
-      <el-col :span="2"><div>负载</div></el-col>
       <el-col :span="2"><div>内存</div></el-col>
-      <el-col :span="4"><div>硬盘</div></el-col>
+      <el-col :span="5"><div>硬盘</div></el-col>
       <el-col :span="2"><div>流量</div></el-col>
       <el-col :span="2"><div>上报时间</div></el-col>
       <el-col :span="2"><div>备注</div></el-col>
@@ -55,7 +54,8 @@
       :id="data._id"
       :ip="data.ip"
       :desc="data.desc"
-      :cpu="data.cpu"
+      :cpu_use="data.cpu.use"
+      :cpu_siblings="data.cpu.siblings"
       :load="data.load"
       :memory="data.memory"
       :disk="data.disk"

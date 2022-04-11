@@ -178,6 +178,7 @@ class ServerCPULog(Model):
         'atime': 添加时间
         'id': 服务器id
         'value': 当前占用cpu(百分比)
+        'siblings': 核心数
     """
     name = 'server_cpu_log'
 
@@ -185,6 +186,7 @@ class ServerCPULog(Model):
         'atime':               (datetime,           None),
         'id':                  (ObjectId,           None),
         'value':               (float,                 0),
+        'siblings':               (int,                   0),
     }
 
 
@@ -193,14 +195,14 @@ class ServerLoadLog(Model):
     服务器监控负载日志列表
         'atime': 添加时间
         'id': 服务器id
-        'value': 负载(1分钟,5分钟,15分钟)(1.5,1.0,0.8)
+        'value': 负载(1分钟,5分钟,15分钟)([1.5,1.0,0.8])
     """
     name = 'server_load_log'
 
     field = {
         'atime':               (datetime,           None),
         'id':                  (ObjectId,           None),
-        'value':               (str,                  ''),
+        'value':               (list,                 []),
     }
 
 

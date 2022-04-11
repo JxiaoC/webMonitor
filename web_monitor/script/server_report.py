@@ -7,10 +7,14 @@ from cPython import cPython as cp
 
 
 def start(test=False):
+    _cpu_info = os.popen('cat /proc/cpuinfo | grep siblings').read()
     _ = os.popen('top -bn 1 -i -c').read()
     if test:
         _ = open('t', 'r').read()
-    cpu = round(100 - float(cp.get_string(_, 'ni,', 'id').strip()), 2)
+    cpu = {
+        'use': round(100 - float(cp.get_string(_, 'ni,', 'id').strip()), 2),
+        'siblings': int(re.findall('(\d{1,3})', _cpu_info)[0]),
+    }
     load = [float(f.strip()) for f in cp.get_string(_, 'load average:', '\n').split(',')]
     memory_temp = re.search('(.)iB Mem.+?(\d+?\.\d+?).+?total.+?(\d+?\.\d+?).+?free', _)
     memory = float(memory_temp.group(3))
@@ -50,19 +54,21 @@ def start(test=False):
             'total_value': int(f[1]) * 1024 * 1024 * 1024,
             'mount_name': f[3].strip(),
         })
-    # 04/01/2022    23.23 GiB |   25.09 GiB |   48.32 GiB |    4.80 Mbit/s
     _ = os.popen('vnstat --json').read()
     if test:
         _ = open('network', 'r').read()
-    network_temp = json.loads(_)
     network = []
-    for f in network_temp['interfaces'][0]['traffic']['hours']:
-        time = '%s%02d%02d%02d' % (f['date']['year'], f['date']['month'], f['date']['day'], f['id'])
-        network.append({
-            'time': int(time),
-            'value': f['tx'],
-        })
-        pass
+    try:
+        network_temp = json.loads(_)
+        for f in network_temp['interfaces'][0]['traffic']['hours']:
+            time = '%s%02d%02d%02d' % (f['date']['year'], f['date']['month'], f['date']['day'], f['id'])
+            network.append({
+                'time': int(time),
+                'value': f['tx'],
+            })
+            pass
+    except:
+        print('未安装vnstat')
 
     all = {
         'cpu': cpu,
@@ -74,7 +80,10 @@ def start(test=False):
     if test:
         print(all)
         print(cp.post_for_request('https://8861.mac.xiaoc.cn/server_report/all', _data={'data': json.dumps(all)}))
+    else:
+        print(cp.post_for_request('https://web-monitor.xiaoc.cn/server_report/all', _data={'data': json.dumps(all)}))
 
 
 if __name__ == '__main__':
+    _ = os.popen('vnstat --json').read()
     start(True)

@@ -27,7 +27,7 @@
     </el-dialog>
 
     <el-row align="middle" type="flex" class="name-id">
-      <el-col :span="3"
+      <el-col :span="4"
         ><el-tooltip placement="bottom-start" class="name" :content="name">
           <div>{{ name }}</div>
         </el-tooltip>
@@ -42,23 +42,23 @@
       </el-col>
       <el-col :span="2"
         >
-          <div>{{ cpu }}%</div>
-        </el-col>
-      <el-col :span="2"
-        >
+          <div>{{ cpu_use }}% ({{ cpu_siblings }}H)</div>
           <div>{{ load['load_1'] }}, {{ load['load_5'] }}, {{ load['load_15'] }}</div>
         </el-col>
       <el-col :span="2"
         >
-          <div>{{ memory['value'] }} / {{memory['total_value']}}</div>
+          <div>{{ memory['value'] | formatSize }} / {{memory['total_value'] | formatSize}}</div>
         </el-col>
-      <el-col :span="4"
+      <el-col :span="5"
         >
-          <div>{{ disk }}</div>
+          <div v-for="data in disk"
+      v-bind:key="data.name">
+      {{ data.value | formatSize }}/{{ data.total_value | formatSize }}({{parseFloat(data.value / data.total_value * 100).toFixed(2)}}%) - {{ data.name }}
+      </div>
         </el-col>
       <el-col :span="2"
         >
-          <div>{{ network }}</div>
+          <div>{{ network | formatSize }}</div>
         </el-col>
       <el-col :span="2"
         >
@@ -104,7 +104,7 @@
 import Clipboard from "clipboard";
 import axios from "axios";
 import Qs from "qs";
-import { formatDate } from "../common/data.js";
+import { formatDate, formatSize } from "../common/data.js";
 export default {
   name: "server_status",
   props: {
@@ -112,7 +112,8 @@ export default {
     name: String,
     ip: String,
     desc: String,
-    cpu: Number,
+    cpu_use: Number,
+    cpu_siblings: Number,
     load: Object,
     memory: Object,
     network: Number,
@@ -126,6 +127,9 @@ export default {
       time = time * 1000;
       let date = new Date(time);
       return formatDate(date, "yyyy-MM-dd hh:mm");
+    },
+    formatSize(size) {
+      return formatSize(size);
     },
   },
   data: function () {
@@ -172,7 +176,7 @@ export default {
           axios({
             method: "post",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            url: window.host + "/http_monitor/edit_all",
+            url: window.host + "/server_monitor/edit_all",
             data: postData,
           }).then(function (res) {
             if (res.data.code != 0) {
@@ -222,13 +226,14 @@ export default {
         this.status24 >= 30 ? "color: #fff;" : "color: #000";
       return this.current24Status + "% (最后更新:" + this.LastTime + ")";
     },
+    
     remove: function () {
       this.dialogVisible = false;
       this.is_remove = true;
       axios({
         method: "post",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        url: window.host + "/http_monitor/remove",
+        url: window.host + "/server_monitor/remove",
         data: Qs.stringify({
           id: this.id,
         }),
@@ -240,7 +245,7 @@ export default {
       axios({
         method: "post",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        url: window.host + "/http_monitor/edit",
+        url: window.host + "/server_monitor/edit",
         data: Qs.stringify({
           id: this.id,
           key: "enable",
