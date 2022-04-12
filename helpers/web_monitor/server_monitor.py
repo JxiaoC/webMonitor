@@ -45,8 +45,15 @@ def lists(page, limit, search_key, search_value):
             'total_value': f['memory'][0].get('total_value', 0) if len(f['memory']) > 0 else 0,
         }
 
-        f['network'] = list(tb_network_log.find({'id': f['_id']}).sort('atime', -1).limit(1))
-        f['network'] = f['network'][0].get('value', 0) if len(f['network']) > 0 else 0
+        start_time = int(datetime.datetime.now().__format__('%Y%m0100'))
+        end_time = int((datetime.datetime.now() + datetime.timedelta(days=31)).__format__('%Y%m0100'))
+
+        f['network'] = list(tb_network_log.find({'id': f['_id'], 'time': {'$gte': start_time, '$lte': end_time}}))
+        network_flows = 0
+        for ff in f['network']:
+            network_flows += ff.get('value', 0)
+            print(ff)
+        f['network'] = network_flows
 
         f['disk'] = list(tb_disk_log.find({'id': f['_id']}).sort('atime', -1).limit(30))
         _ = []

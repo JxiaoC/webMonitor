@@ -48,6 +48,7 @@
       <el-col :span="2"
         >
           <div>{{ memory['value'] | formatSize }} / {{memory['total_value'] | formatSize}}</div>
+          <div>({{parseFloat(memory['value'] / memory['total_value'] * 100).toFixed(2)}}%)</div>
         </el-col>
       <el-col :span="5"
         >
@@ -176,7 +177,7 @@ export default {
           axios({
             method: "post",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            url: window.host + "/server_monitor/edit_all",
+            url: window.host + "/server_monitor/edit",
             data: postData,
           }).then(function (res) {
             if (res.data.code != 0) {
@@ -328,9 +329,5 @@ export default {
   white-space: nowrap;
   overflow: auto;
   text-align: left;
-}
-
-#server .utime{
-  font-size: 14px;
 }
 </style>

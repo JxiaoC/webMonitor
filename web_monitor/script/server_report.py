@@ -11,14 +11,17 @@ def start(test=False):
     _ = os.popen('top -bn 1 -i -c').read()
     if test:
         _ = open('t', 'r').read()
+    print(_)
     cpu = {
         'use': round(100 - float(cp.get_string(_, 'ni,', 'id').strip()), 2),
         'siblings': int(re.findall('(\d{1,3})', _cpu_info)[0]),
     }
     load = [float(f.strip()) for f in cp.get_string(_, 'load average:', '\n').split(',')]
     memory_temp = re.search('(.)iB Mem.+?(\d+?\.\d+?).+?total.+?(\d+?\.\d+?).+?free', _)
-    memory = float(memory_temp.group(3))
+    if not memory_temp:
+        memory_temp = re.search('(.)iB Mem.+?(\d+).+?total.+?(\d+).+?free', _)
     total_memory = float(memory_temp.group(2))
+    memory = total_memory - float(memory_temp.group(3))
     if memory_temp.group(1) == 'K':
         memory *= 1024
         total_memory *= 1024
@@ -41,17 +44,17 @@ def start(test=False):
         'total_value': total_memory,
     }
 
-    _ = os.popen('df -h').read()
+    _ = os.popen('df -k').read()
     if test:
         _ = open('disk', 'r').read()
 
-    disk_temp = re.findall('(/dev.+?) ([\d\.]+?)G.+?([\d\.]+?)G.*(/.*)', _)
+    disk_temp = re.findall('(/dev.+?) ([\d\.]+).+?([\d\.]+).*(/.*)', _)
     disk = []
     for f in disk_temp:
         disk.append({
             'disk_name': f[0].strip(),
-            'value': int(f[2]) * 1024 * 1024 * 1024,
-            'total_value': int(f[1]) * 1024 * 1024 * 1024,
+            'value': int(f[2]) * 1024,
+            'total_value': int(f[1]) * 1024,
             'mount_name': f[3].strip(),
         })
     _ = os.popen('vnstat --json').read()
@@ -64,11 +67,11 @@ def start(test=False):
             time = '%s%02d%02d%02d' % (f['date']['year'], f['date']['month'], f['date']['day'], f['id'])
             network.append({
                 'time': int(time),
-                'value': f['tx'],
+                'value': f['tx'] * 1024,
             })
             pass
     except:
-        print('未安装vnstat')
+        print('未安装vnstat, 不上报网卡流量信息')
 
     all = {
         'cpu': cpu,
@@ -81,9 +84,9 @@ def start(test=False):
         print(all)
         print(cp.post_for_request('https://8861.mac.xiaoc.cn/server_report/all', _data={'data': json.dumps(all)}))
     else:
+        print(all)
         print(cp.post_for_request('https://web-monitor.xiaoc.cn/server_report/all', _data={'data': json.dumps(all)}))
 
 
 if __name__ == '__main__':
-    _ = os.popen('vnstat --json').read()
-    start(True)
+    start(False)

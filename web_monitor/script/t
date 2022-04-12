@@ -1,8 +1,10 @@
-top - 17:24:27 up 21:49,  1 user,  load average: 0.13, 0.09, 0.09
-Tasks: 382 total,   1 running, 381 sleeping,   0 stopped,   0 zombie
-%Cpu(s):  0.1 us,  0.3 sy,  0.0 ni, 99.6 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
-MiB Mem :   3917.4 total,   1638.4 free,    801.0 used,   1478.0 buff/cache
-MiB Swap:    976.0 total,    976.0 free,      0.0 used.   2829.9 avail Mem
+top - 19:12:02 up 42 days,  3:12,  1 user,  load average: 0.03, 0.10, 0.08
+Tasks: 102 total,   1 running,  71 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  4.1 us,  2.1 sy,  0.0 ni, 93.6 id,  0.1 wa,  0.0 hi,  0.2 si,  0.0 st
+KiB Mem :  1008500 total,   112904 free,   742468 used,   153128 buff/cache
+KiB Swap:  4194300 total,  3830820 free,   363480 used.   122536 avail Mem
 
-    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
-  58385 xiaoc     20   0   10400   3884   3184 R   5.9   0.1   0:00.03 top -bn 1 -i -c
+  PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND
+ 1053 xiaoc     20   0 4986760  30076   5940 S  6.2  3.0 155:39.44 ./v2ray4.44 -config c_config.json
+15847 www       20   0  204648  35624   2928 S  6.2  3.5   2:25.60 nginx: worker process
+22948 root      20   0   17808    416      0 S  6.2  0.0   5:11.92 /usr/local/share/assist-daemon/assist_daemon
