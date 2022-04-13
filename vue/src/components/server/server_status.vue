@@ -10,11 +10,10 @@
           <el-input
             v-model="res.name"
             placeholder="请输入内容"
-            disabled
           ></el-input>
         </el-form-item>
          <el-form-item label="服务器ip" prop="ip">
-          <el-input v-model="res.ip" placeholder="请输入ip地址"></el-input>
+          <el-input v-model="res.ip" placeholder="请输入ip地址" disabled></el-input>
         </el-form-item>
         <el-form-item label="备注">
           <el-input v-model="res.desc" placeholder="备注"></el-input>
@@ -27,7 +26,7 @@
     </el-dialog>
 
     <el-row align="middle" type="flex" class="name-id">
-      <el-col :span="4"
+      <el-col :span="3"
         ><el-tooltip placement="bottom-start" class="name" :content="name">
           <div>{{ name }}</div>
         </el-tooltip>
@@ -45,7 +44,7 @@
           <div>{{ cpu_use }}% ({{ cpu_siblings }}H)</div>
           <div>{{ load['load_1'] }}, {{ load['load_5'] }}, {{ load['load_15'] }}</div>
         </el-col>
-      <el-col :span="2"
+      <el-col :span="3"
         >
           <div>{{ memory['value'] | formatSize }} / {{memory['total_value'] | formatSize}}</div>
           <div>({{parseFloat(memory['value'] / memory['total_value'] * 100).toFixed(2)}}%)</div>
@@ -329,5 +328,9 @@ export default {
   white-space: nowrap;
   overflow: auto;
   text-align: left;
+}
+
+#server .el-row{
+  font-size: 12px;
 }
 </style>

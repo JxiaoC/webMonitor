@@ -8,20 +8,27 @@ from cPython import cPython as cp
 
 def start(test=False):
     _cpu_info = os.popen('cat /proc/cpuinfo | grep siblings').read()
+    cpu_siblings = 1
+    try:
+        cpu_siblings = int(re.findall('(\d{1,3})', _cpu_info)[0])
+    except:
+        pass
     _ = os.popen('top -bn 1 -i -c').read()
     if test:
         _ = open('t', 'r').read()
     print(_)
     cpu = {
         'use': round(100 - float(cp.get_string(_, 'ni,', 'id').strip()), 2),
-        'siblings': int(re.findall('(\d{1,3})', _cpu_info)[0]),
+        'siblings': cpu_siblings,
     }
     load = [float(f.strip()) for f in cp.get_string(_, 'load average:', '\n').split(',')]
-    memory_temp = re.search('(.)iB Mem.+?(\d+?\.\d+?).+?total.+?(\d+?\.\d+?).+?free', _)
+    memory_temp = re.search('(.)iB Mem.+?(\d+?\.\d+?).+?total.+?free.+?(\d+?\.\d+?).+?used', _)
     if not memory_temp:
-        memory_temp = re.search('(.)iB Mem.+?(\d+).+?total.+?(\d+).+?free', _)
+        memory_temp = re.search('(.)iB Mem.+?(\d+).+?total.+?free.+?(\d+).+?used', _)
+    if not memory_temp:
+        memory_temp = re.search('(.)iB Mem.+?(\d+).+?total.+?(\d+).+?used', _)
     total_memory = float(memory_temp.group(2))
-    memory = total_memory - float(memory_temp.group(3))
+    memory = float(memory_temp.group(3))
     if memory_temp.group(1) == 'K':
         memory *= 1024
         total_memory *= 1024
