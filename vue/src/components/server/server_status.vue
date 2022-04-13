@@ -46,14 +46,31 @@
         </el-col>
       <el-col :span="3"
         >
-          <div>{{ memory['value'] | formatSize }} / {{memory['total_value'] | formatSize}}</div>
-          <div>({{parseFloat(memory['value'] / memory['total_value'] * 100).toFixed(2)}}%)</div>
+        <el-progress
+            :text-inside="true"
+            :stroke-width="24"
+            :percentage="parseFloat(memory['value'] / memory['total_value'] * 100)"
+            :status="MemoryStatusStr"
+            :format="format"
+          ></el-progress>
         </el-col>
       <el-col :span="5"
         >
           <div v-for="data in disk"
       v-bind:key="data.name">
-      {{ data.value | formatSize }}/{{ data.total_value | formatSize }}({{parseFloat(data.value / data.total_value * 100).toFixed(2)}}%) - {{ data.name }}
+      <el-progress
+            :text-inside="true"
+            :stroke-width="16"
+            :percentage="data.value / data.total_value * 100"
+            :status=' data.value / data.total_value * 100 >= 85
+          ? "exception"
+          : data.value / data.total_value * 100 >= 70
+          ? "warning"
+          : "success"'
+          :style='data.value / data.total_value * 100 > 60 ? "color: #fff;" : "color: #000;"'
+          :format="formatDisk(data)"
+          ></el-progress>
+      <!-- {{ data.value | formatSize }}/{{ data.total_value | formatSize }}({{parseFloat(data.value / data.total_value * 100).toFixed(2)}}%) - {{ data.name }} -->
       </div>
         </el-col>
       <el-col :span="2"
@@ -151,6 +168,13 @@ export default {
         ],
       },
       editDialogVisible: false,
+      memoryRate: parseInt(this.memory['value'] / this.memory['total_value'] * 100),
+      MemoryStatusStr:
+        this.memoryRate >= 90
+          ? "exception"
+          : this.memoryRate >= 60
+          ? "warning"
+          : "success",
     };
   },
   watch: {
@@ -215,16 +239,19 @@ export default {
     },
     format() {
       this.currentEnable = this.enable;
-      this.current24Status = this.status24;
-      this.current24StatusStr =
-        this.status24 >= 85
-          ? "success"
-          : this.status24 >= 25
+      this.memoryRate = parseInt(this.memory['value'] / this.memory['total_value'] * 100);
+      this.MemoryStatusStr =
+        this.memoryRate >= 90
+          ? "exception"
+          : this.memoryRate >= 60
           ? "warning"
-          : "exception";
-      this.current24StatusTextColor =
-        this.status24 >= 30 ? "color: #fff;" : "color: #000";
-      return this.current24Status + "% (最后更新:" + this.LastTime + ")";
+          : "success";
+      return formatSize(this.memory['value']) + '/' + formatSize(this.memory['total_value']) + '(' + this.memoryRate + "%)";
+    },
+    formatDisk(data) {
+      return function(){
+        return formatSize(data['value']) + '/' + formatSize(data['total_value']) + '(' + parseFloat(data['value'] / data['total_value'] * 100).toFixed(2) + "%)";
+      }
     },
     
     remove: function () {
@@ -332,5 +359,10 @@ export default {
 
 #server .el-row{
   font-size: 12px;
+}
+
+.el-col .el-progress{
+  padding: 0 3px;
+  margin: 3px 0;
 }
 </style>
