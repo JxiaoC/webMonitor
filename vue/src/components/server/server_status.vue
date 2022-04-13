@@ -44,17 +44,17 @@
           <div>{{ cpu_use }}% ({{ cpu_siblings }}H)</div>
           <div>{{ load['load_1'] }}, {{ load['load_5'] }}, {{ load['load_15'] }}</div>
         </el-col>
-      <el-col :span="3"
+      <el-col :span="4"
         >
         <el-progress
             :text-inside="true"
-            :stroke-width="24"
+            :stroke-width="18"
             :percentage="parseFloat(memory['value'] / memory['total_value'] * 100)"
             :status="MemoryStatusStr"
             :format="format"
           ></el-progress>
         </el-col>
-      <el-col :span="5"
+      <el-col :span="6"
         >
           <div v-for="data in disk"
       v-bind:key="data.name">
@@ -67,7 +67,6 @@
           : data.value / data.total_value * 100 >= 70
           ? "warning"
           : "success"'
-          :style='data.value / data.total_value * 100 > 60 ? "color: #fff;" : "color: #000;"'
           :format="formatDisk(data)"
           ></el-progress>
       <!-- {{ data.value | formatSize }}/{{ data.total_value | formatSize }}({{parseFloat(data.value / data.total_value * 100).toFixed(2)}}%) - {{ data.name }} -->
@@ -80,11 +79,6 @@
       <el-col :span="2"
         >
           <div class="utime">{{ utime | formatDate}}</div>
-        </el-col>
-      <el-col :span="2"
-        ><el-tooltip placement="bottom-start" class="desc" :content="desc">
-          <div>{{ desc }}</div>
-        </el-tooltip>
         </el-col>
       <el-col :span="3"
         ><div class="setting">
@@ -250,7 +244,7 @@ export default {
     },
     formatDisk(data) {
       return function(){
-        return formatSize(data['value']) + '/' + formatSize(data['total_value']) + '(' + parseFloat(data['value'] / data['total_value'] * 100).toFixed(2) + "%)";
+        return  data['name'] + ' ' + formatSize(data['value'], 0) + '/' + formatSize(data['total_value'], 0) + '(' + parseInt(data['value'] / data['total_value'] * 100) + "%)";
       }
     },
     
@@ -362,7 +356,7 @@ export default {
 }
 
 .el-col .el-progress{
-  padding: 0 3px;
+  padding: 0 5px;
   margin: 3px 0;
 }
 </style>

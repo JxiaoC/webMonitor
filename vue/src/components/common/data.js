@@ -18,16 +18,17 @@ export function formatDate(date, fmt) {
     return fmt
   }
 
-  export function formatSize(limit) {
+  export function formatSize(limit, fixed) {
+    if(fixed==null) fixed = 2
     var size = "";
     if(limit < 0.1 * 1024){                            //小于0.1KB，则转化成B
-        size = limit.toFixed(2) + "B"
+        size = limit.toFixed(fixed) + "B"
     }else if(limit < 0.1 * 1024 * 1024){            //小于0.1MB，则转化成KB
-        size = (limit/1024).toFixed(2) + "KB"
+        size = (limit/1024).toFixed(fixed) + "KB"
     }else if(limit < 0.1 * 1024 * 1024 * 1024){        //小于0.1GB，则转化成MB
-        size = (limit/(1024 * 1024)).toFixed(2) + "MB"
+        size = (limit/(1024 * 1024)).toFixed(fixed) + "MB"
     }else{                                            //其他转化成GB
-        size = (limit/(1024 * 1024 * 1024)).toFixed(2) + "GB"
+        size = (limit/(1024 * 1024 * 1024)).toFixed(fixed) + "GB"
     }
  
     var sizeStr = size + "";                        //转成字符串

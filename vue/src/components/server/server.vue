@@ -40,11 +40,10 @@
       <el-col :span="3"><div>监控名称</div></el-col>
       <el-col :span="2"><div>IP地址</div></el-col>
       <el-col :span="2"><div>CPU</div></el-col>
-      <el-col :span="3"><div>内存</div></el-col>
-      <el-col :span="5"><div>硬盘</div></el-col>
+      <el-col :span="4"><div>内存</div></el-col>
+      <el-col :span="6"><div>硬盘</div></el-col>
       <el-col :span="2"><div>本月流出流量</div></el-col>
       <el-col :span="2"><div>上报时间</div></el-col>
-      <el-col :span="2"><div>备注</div></el-col>
       <el-col :span="3"><div>管理</div></el-col>
     </el-row>
     <serverstatus
