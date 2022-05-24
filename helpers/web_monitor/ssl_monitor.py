@@ -80,7 +80,11 @@ def ref_ssl_time(data):
 
     id = ssl_info.get('_id')
     host = ssl_info.get('host', '')
-    data = os.popen("echo | openssl s_client -servername %s  -connect %s:443 2>/dev/null | openssl x509 -noout -dates |grep 'After'| awk -F '=' '{print $2}'| awk -F ' +' '{print $1,$2,$4 }'" % (host, host)).read().strip()
+    if host.find(':') == -1:
+        host += ':443'
+    host, port = host.split(':')
+    data = os.popen("echo | openssl s_client -servername %s  -connect %s:%s 2>/dev/null | openssl x509 -noout -dates |grep 'After'| awk -F '=' '{print $2}'| awk -F ' +' '{print $1,$2,$4 }'" %
+                    (host, port, host)).read().strip()
     rst = datetime.datetime.strptime(data, '%b %d %Y')
     tb_ssl_list.update({'_id': ObjectId(id)}, {'$set': {
         'rst_time': rst,
