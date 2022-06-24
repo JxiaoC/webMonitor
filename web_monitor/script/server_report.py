@@ -22,30 +22,22 @@ def start(test=False):
         'siblings': cpu_siblings,
     }
     load = [float(f.strip()) for f in cp.get_string(_, 'load average:', '\n').split(',')]
-    memory_temp = re.search('(.)iB Mem.+?(\d+?\.\d+?).+?total.+?free.+?(\d+?\.\d+?).+?used', _)
-    if not memory_temp:
-        memory_temp = re.search('(.)iB Mem.+?(\d+).+?total.+?free.+?(\d+).+?used', _)
-    if not memory_temp:
-        memory_temp = re.search('(.)iB Mem.+?(\d+).+?total.+?(\d+).+?used', _)
-    total_memory = float(memory_temp.group(2))
-    memory = float(memory_temp.group(3))
-    if memory_temp.group(1) == 'K':
-        memory *= 1024
-        total_memory *= 1024
-    if memory_temp.group(1) == 'M':
-        memory *= 1024
-        memory *= 1024
-        total_memory *= 1024
-        total_memory *= 1024
-    if memory_temp.group(1) == 'G':
-        memory *= 1024
-        memory *= 1024
-        memory *= 1024
-        total_memory *= 1024
-        total_memory *= 1024
-        total_memory *= 1024
-    memory = int(memory)
-    total_memory = int(total_memory)
+
+    _ = os.popen('free -b').read()
+    if test:
+        _ = open('free', 'r').read()
+    memory_temp = re.findall('Mem.+?(\d+).+?(\d+).+?(\d+).+?(\d+).+?(\d+).+?(\d+)', _)
+    memory_names = [f for f in _.split('\n')[0].split(' ') if f]
+    cached_index = 5
+    for i, f in enumerate(memory_names):
+        if f.find('cache') > -1:
+            cached_index = i
+            break
+    if cached_index == 5:
+        memory = int(memory_temp[0][1]) - int(memory_temp[0][cached_index])
+    else:
+        memory = int(memory_temp[0][1])
+    total_memory = int(memory_temp[0][0])
     memory = {
         'value': memory,
         'total_value': total_memory,
@@ -92,7 +84,7 @@ def start(test=False):
         print(cp.post_for_request('https://8861.mac.xiaoc.cn/server_report/all', _data={'data': json.dumps(all)}))
     else:
         print(all)
-        print(cp.post_for_request('https://web-monitor.xiaoc.cn/server_report/all', _data={'data': json.dumps(all)}))
+        print(cp.post_for_request('http://web-monitor.xiaoc.cn/server_report/all', _data={'data': json.dumps(all)}))
 
 
 if __name__ == '__main__':

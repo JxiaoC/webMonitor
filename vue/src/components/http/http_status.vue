@@ -563,7 +563,7 @@ export default {
 
 #http .box_24h {
   white-space: nowrap;
-  overflow: auto;
+  overflow: hidden;
   text-align: left;
 }
 </style>
