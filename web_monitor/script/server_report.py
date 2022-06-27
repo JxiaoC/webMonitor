@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 # 服务器上报信息
+import datetime
 import json
 import os
 import re
@@ -70,7 +71,30 @@ def start(test=False):
             })
             pass
     except:
-        print('未安装vnstat, 不上报网卡流量信息')
+        try:
+            month = datetime.datetime.now().__format__('%m')
+            _ = os.popen('vnstat -d').read()
+            if test:
+                _ = open('network_d', 'r').read()
+            network = []
+            for f in re.findall('(' + month + '/\d{1,2}/\d{2,4}).*\d{1,3}.\d{1,2}..iB\D+(\d+.\d{1,2}).([KMGT])iB.+\d{1,3}.\d{1,2}..iB', _):
+                time = '%s%02d%02d00' % (int(('20' if len(f[0].split('/')[2]) == 2 else '') + f[0].split('/')[2]), int(f[0].split('/')[0]), int(f[0].split('/')[1]))
+                value = float(f[1])
+                type = f[2]
+                if type == 'K':
+                    value *= 1024
+                if type == 'M':
+                    value = value * 1024 * 1024
+                if type == 'G':
+                    value = value * 1024 * 1024 * 1024
+                if type == 'T':
+                    value = value * 1024 * 1024 * 1024 * 1024
+                network.append({
+                    'time': int(time),
+                    'value': value,
+                })
+        except Exception as e:
+            print('not vnstat', e)
 
     all = {
         'cpu': cpu,
@@ -84,7 +108,7 @@ def start(test=False):
         print(cp.post_for_request('https://8861.mac.xiaoc.cn/server_report/all', _data={'data': json.dumps(all)}))
     else:
         print(all)
-        print(cp.post_for_request('http://web-monitor.xiaoc.cn/server_report/all', _data={'data': json.dumps(all)}))
+        print(cp.post_for_request('http://web-monitor.xiaoc.cn:1023/server_report/all', _data={'data': json.dumps(all)}))
 
 
 if __name__ == '__main__':
