@@ -70,15 +70,22 @@ def start(test=False):
                 'value': f['tx'] * 1024,
             })
             pass
-    except:
+    except Exception as e:
+        print(e)
         try:
             month = datetime.datetime.now().__format__('%m')
             _ = os.popen('vnstat -d').read()
             if test:
                 _ = open('network_d', 'r').read()
             network = []
-            for f in re.findall('(' + month + '/\d{1,2}/\d{2,4}).*\d{1,3}.\d{1,2}..iB\D+(\d+.\d{1,2}).([KMGT])iB.+\d{1,3}.\d{1,2}..iB', _):
-                time = '%s%02d%02d00' % (int(('20' if len(f[0].split('/')[2]) == 2 else '') + f[0].split('/')[2]), int(f[0].split('/')[0]), int(f[0].split('/')[1]))
+            _list = re.findall('(' + month + '/\d{1,2}/\d{2,4}).*\d{1,3}.\d{1,2}..iB\D+(\d+.\d{1,2}).([KMGT])iB.+\d{1,3}.\d{1,2}..iB', _)
+            if len(_list) == 0:
+                _list = re.findall('(\d{2,4}-' + month + '-\d{1,2}).*\d{1,3}.\d{1,2}..iB\D+(\d+.\d{1,2}).([KMGT])iB.+\d{1,3}.\d{1,2}..iB', _)
+            for f in _list:
+                if f[0].find('-') != -1:
+                    time = '%s%02d%02d00' % (int(('20' if len(f[0].split('-')[0]) == 2 else '') + f[0].split('-')[0]), int(f[0].split('-')[1]), int(f[0].split('-')[2]))
+                else:
+                    time = '%s%02d%02d00' % (int(('20' if len(f[0].split('/')[2]) == 2 else '') + f[0].split('/')[2]), int(f[0].split('/')[0]), int(f[0].split('/')[1]))
                 value = float(f[1])
                 type = f[2]
                 if type == 'K':
@@ -93,8 +100,8 @@ def start(test=False):
                     'time': int(time),
                     'value': value,
                 })
-        except Exception as e:
-            print('not vnstat', e)
+        except Exception as ee:
+            print('not vnstat', ee)
 
     all = {
         'cpu': cpu,
