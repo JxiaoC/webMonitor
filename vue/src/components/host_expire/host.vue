@@ -81,11 +81,6 @@ export default {
         name: [{ required: true, message: "请输入监控名称", trigger: "blur" }],
         host: [
           { required: true, message: "请输入监控域名", trigger: "blur" },
-          {
-            pattern: /^\w+\.\w+$/,
-            message: "host格式不对",
-            trigger: "blur",
-          },
         ],
       },
       addDialogVisible: false,

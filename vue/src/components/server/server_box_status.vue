@@ -133,11 +133,6 @@ export default {
     res: Object,
   },
   filters: {
-    formatDate(time) {
-      time = time * 1000;
-      let date = new Date(time);
-      return formatDate(date, "yyyy-MM-dd hh:mm");
-    },
     formatSize(size) {
       return formatSize(size);
     },
@@ -250,6 +245,7 @@ export default {
     formatDate(time) {
       time = time * 1000;
       let date = new Date(time);
+      if (Date.now() - time < 120 * 1000) return "刚刚";
       return formatDate(date, "yyyy-MM-dd hh:mm");
     },
     formatSize(size) {
