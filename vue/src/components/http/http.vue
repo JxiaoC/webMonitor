@@ -348,7 +348,7 @@ export default {
         this.$alert("请输入回调url");
         return;
       }
-      let postData = "status=" + status + "&callback_url=" + this.addData.callback_url;
+      let postData = "status=" + status + "&callback_url=" + encodeURIComponent(this.addData.callback_url);
       let self = this;
       self.$msgbox({
         dangerouslyUseHTMLString: true,
