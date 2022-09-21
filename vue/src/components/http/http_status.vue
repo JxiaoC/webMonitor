@@ -324,7 +324,11 @@ export default {
       this.res.header = window.btoa(this.res.header);
       this.res.data = window.btoa(this.res.data);
       this.res.id = this.id;
-      let postData = Qs.stringify(this.res);
+      var temp_res = {...this.res};
+      console.log(temp_res);
+      temp_res['status24_list'] = '';
+      let postData = Qs.stringify(temp_res);
+      console.log(postData);
       this.res.header = temp_header;
       this.res.data = temp_data;
       let self = this;
