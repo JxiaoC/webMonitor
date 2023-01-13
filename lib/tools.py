@@ -9,8 +9,10 @@ from config import config
 from bson import ObjectId
 from cPython import cPython as cp
 from helpers.web_monitor import setting
+from models.web_monitor import model
 from turbo.core.exceptions import ResponseMsg
 
+tb_send_server_jiang_log = model.SendServerJiangLog()
 if os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)), '__test__')):
     DEBUG = True
 else:
@@ -79,6 +81,13 @@ def send_server_jiang_msg(title, desp, server_jiang_token=None):
         quote(desp),
     )
     data = cp.get_html(url)
+
+    tb_send_server_jiang_log.insert({
+        'atime': datetime.datetime.now(),
+        'text': title + ' | ' + desp,
+        'status': 1 if data is None else 0
+    })
+
     if data is None:
         return False
     try:
@@ -116,6 +125,7 @@ def get_host_expire(host):
 
 
 if __name__ == '__main__':
-    # print(get_host_expire('xiaoc.cn'))
-    print(sec2hms(597402))
+    # print(get_host_expire('jiji.moe'))
+    # print(sec2hms(597402))
+    send_server_jiang_msg('tt', 'text', 'SCT59902T3St72yh9w7wcKNc5V70Ya0RU')
     pass

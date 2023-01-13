@@ -262,3 +262,19 @@ class ServerNetworkLog(Model):
         'time':                (int,                   0),
         'value':               (int,                   0),
     }
+
+
+class SendServerJiangLog(Model):
+    """
+    发送server酱通知的日志文件
+        'atime': 发送时间
+        'text': 发送内容
+        '发送状态': 0=成功, 1=失败
+    """
+    name = 'send_server_jiang_log'
+
+    field = {
+        'atime':               (datetime,           None),
+        'text':                (str,                None),
+        'status':              (int,                   0),
+    }

@@ -112,7 +112,12 @@ def monitor(id, info, test=False):
         print('警报解除')
         U['warn_time'] = datetime.datetime(2000, 1, 1)
         U['push_warn_time'] = datetime.datetime(2000, 1, 1)
-        tools.send_server_jiang_msg('%s 可用性恢复' % name, '站点 %s 可用性故障已于%s后恢复, 共连续失败%s次' % (url, tools.sec2hms(continue_sec), info.get('con_error_num', 0)))
+        if tb_web_list.count_documents({'enable': True, 'con_error_num': {'$gt': 0}}) == 1:
+            tools.send_server_jiang_msg('%s 全部可用性恢复' % name, '站点 %s 可用性故障已于%s后恢复, 共连续失败%s次' % (
+            url, tools.sec2hms(continue_sec), info.get('con_error_num', 0)))
+        else:
+            tools.send_server_jiang_msg('%s 可用性恢复' % name, '站点 %s 可用性故障已于%s后恢复, 共连续失败%s次' % (
+            url, tools.sec2hms(continue_sec), info.get('con_error_num', 0)))
         callback.new_callback(id, callback_url, True)
     tb_web_list.update({'_id': id}, {'$set': U})
 
