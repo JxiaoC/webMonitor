@@ -9,10 +9,16 @@ try:
     import realpath
 except:
     pass
+import os
 from helpers.web_monitor import setting
 from models.web_monitor import model
 from lib import tools
 from web_monitor.task import callback
+
+count = os.popen('ps aux | grep http_monitor | grep -v grep | grep -v /bin/sh | wc -l').read()
+if int(count) > 1:
+    print('is running')
+    exit(0)
 
 tb_web_list = model.WebList()
 tb_web_log = model.WebLog()
