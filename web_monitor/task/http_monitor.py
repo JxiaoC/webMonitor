@@ -68,6 +68,10 @@ def monitor(id, info, test=False):
 
     s_time = int(time.time() * 1000)
     http_code, http_content, err_data = get_http_code_and_content(url, method=method, headers=header, data=data)
+
+    if datetime.datetime.now().hour == 3:
+        print('3点, 不工作~')
+        exit(0)
     fail = http_code not in allow_http_code
     if not fail and find_str:
         if find_str_type == 0 and http_content.find(find_str) == -1:
