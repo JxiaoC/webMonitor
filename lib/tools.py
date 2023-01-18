@@ -101,7 +101,7 @@ def send_server_jiang_msg(title, desp, server_jiang_token=None):
 def get_host_expire(host):
     context = execjs.compile(open(CHINAZ_JS_PATH, 'r').read())
     token = context.call("generateHostKey", host)
-    url = 'http://whois.chinaz.com/getWhoisInfo.ashx'
+    url = 'https://whois.chinaz.com/getWhoisInfoNew.ashx'
     data = cp.post_for_request(url, _data={
         'token': token,
         'host': host,
@@ -127,5 +127,5 @@ def get_host_expire(host):
 if __name__ == '__main__':
     # print(get_host_expire('jiji.moe'))
     # print(sec2hms(597402))
-    send_server_jiang_msg('tt', 'text', 'SCT59902T3St72yh9w7wcKNc5V70Ya0RU')
+    get_host_expire('jijidown.com')
     pass
