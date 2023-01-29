@@ -22,11 +22,11 @@ export function formatDate(date, fmt) {
     if(fixed==null) fixed = 2
     var size = "";
     if(limit < 0.1 * 1024){                            //小于0.1KB，则转化成B
-        size = limit.toFixed(fixed) + "B"
+        size = limit.toFixed(fixed) + " B"
     }else if(limit < 0.1 * 1024 * 1024){            //小于0.1MB，则转化成KB
-        size = (limit/1024).toFixed(fixed) + "KB"
+        size = (limit/1024).toFixed(fixed) + " KB"
     }else if(limit < 0.1 * 1024 * 1024 * 1024){        //小于0.1GB，则转化成MB
-        size = (limit/(1024 * 1024)).toFixed(fixed) + "MB"
+        size = (limit/(1024 * 1024)).toFixed(fixed) + " MB"
     }else{                                            //其他转化成GB
         size = (limit/(1024 * 1024 * 1024)).toFixed(fixed) + "GB"
     }

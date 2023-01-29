@@ -5,7 +5,8 @@ import time
 
 import turbo.log
 
-from helpers.web_monitor import http_monitor, setting, ssl_monitor, host_expire_monitor, server_monitor
+from helpers.web_monitor import http_monitor, setting, ssl_monitor, host_expire_monitor, server_monitor, \
+    server_monitor_real
 from lib import tools
 from .base import BaseHandler
 
@@ -242,3 +243,11 @@ class ServerHandler(BaseHandler):
         ip = self.get_argument('ip', '')
         desc = self.get_argument('desc', '')
         self._data = server_monitor.edit(id, name, ip, desc)
+
+    def do_add_alias(self):
+        ip = self.get_argument('ip', '')
+        name = self.get_argument('name', '')
+        self._data = server_monitor_real.alias(ip, name)
+
+    def do_real(self):
+        self._data = server_monitor_real.get()

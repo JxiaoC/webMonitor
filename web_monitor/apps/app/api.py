@@ -2,7 +2,7 @@
 import requests
 import turbo.log
 from .base import BaseHandler
-from helpers.web_monitor import server_monitor
+from helpers.web_monitor import server_monitor, server_monitor_real
 
 logger = turbo.log.getLogger(__file__)
 
@@ -46,5 +46,16 @@ class ServerReportHandler(BaseHandler):
         data = self.get_argument('data')
         ip = self.request.remote_ip
         server_monitor.add_all(ip, data)
+        pass
+
+
+class ServerReportRealHandler(BaseHandler):
+    def POST(self, type):
+        self.route(type)
+
+    def do_all(self):
+        data = self.get_argument('data')
+        ip = self.request.remote_ip
+        server_monitor_real.add(ip, data)
         pass
 

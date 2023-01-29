@@ -278,3 +278,17 @@ class SendServerJiangLog(Model):
         'text':                (str,                None),
         'status':              (int,                   0),
     }
+
+
+class ServerMonitorAlias(Model):
+    """
+    实时日志的别名信息
+        'ip': ip
+        'name': 0=成功, 1=失败
+    """
+    name = 'server_monitor_alias'
+
+    field = {
+        'ip':                  (str,                None),
+        'name':                (str,                None),
+    }

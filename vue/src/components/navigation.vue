@@ -16,6 +16,9 @@
               <el-menu-item index="1-2" @click="currentTab = 'server'"
                 >服务器监控</el-menu-item
               >
+              <el-menu-item index="1-5" @click="currentTab = 'server_real'"
+                >服务器实时监控</el-menu-item
+              >
               <el-menu-item index="1-3" @click="currentTab = 'ssl'"
                 >SSL证书监控</el-menu-item
               >
@@ -49,12 +52,14 @@ import Vue from "vue";
 import home from "./home/home.vue";
 import http from "./http/http.vue";
 import server from "./server/server_box.vue";
+import server_real from "./server_real/server_real.vue";
 import ssl from "./ssl/ssl.vue";
 import host_expire from "./host_expire/host.vue";
 import setting from "./setting/setting.vue";
 Vue.component("tab-http", http);
 Vue.component("tab-home", home);
 Vue.component("tab-server", server);
+Vue.component("tab-server_real", server_real);
 Vue.component("tab-ssl", ssl);
 Vue.component("tab-host_expire", host_expire);
 Vue.component("tab-setting", setting);
