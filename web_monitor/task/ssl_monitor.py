@@ -8,6 +8,8 @@ from lib import tools
 
 tb_ssl_list = model.SSLList()
 ssl_min_day = int(setting.get().get('ssl_min_day', '1'))
+total = 0
+send_msg = ''
 
 for f in tb_ssl_list.find({'enable': True}):
     try:
@@ -16,7 +18,13 @@ for f in tb_ssl_list.find({'enable': True}):
         print('rst_day', rst_day)
         if rst_day <= ssl_min_day:
             print('报警')
-            msg = '%s SSL证书还有%s天过期' % (f.get('host', ''), rst_day)
-            tools.send_server_jiang_msg(msg, msg)
+            if total == 0:
+                send_msg = '%s SSL证书还有%s天过期' % (f.get('host', ''), rst_day)
+            total += 1
     except Exception as e:
         print(f['host'], e)
+
+if total > 0:
+    send_msg += ', 其他%s个域名也即将过期' % total
+print(send_msg)
+tools.send_server_jiang_msg(send_msg, send_msg)
