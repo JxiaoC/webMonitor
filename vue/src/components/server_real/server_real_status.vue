@@ -58,7 +58,7 @@
           </div>
           <div v-else>
             <div>发送: {{ formatSize(networkTX) }}/S</div>
-            <div>接受: {{ formatSize(networkRX) }}/S</div>
+            <div>接收: {{ formatSize(networkRX) }}/S</div>
           </div>
           </div
       ></el-col>
