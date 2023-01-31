@@ -177,4 +177,8 @@ export default {
   font-size: 12px;
   color: rgb(160, 160, 160);
 }
+
+#host_expire .host_status:nth-child(2n) {
+    background-color: #f9f9f9;
+}
 </style>

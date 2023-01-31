@@ -199,4 +199,8 @@ export default {
 #ssl .auto-ref {
   text-align: right;
 }
+
+#ssl .ssl_status:nth-child(2n) {
+    background-color: #f9f9f9;
+}
 </style>

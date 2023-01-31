@@ -420,6 +420,10 @@ export default {
   color: #979797;
 }
 
+#http .http_status:nth-child(2n) {
+    background-color: #f9f9f9;
+}
+
 .el-message-box__message p {
   word-break: break-all;
 }

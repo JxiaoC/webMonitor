@@ -153,4 +153,8 @@ export default {
 #server_real .auto-ref {
   text-align: right;
 }
+
+#server_real .server_real_status:nth-child(2n) {
+    background-color: #f9f9f9;
+}
 </style>
