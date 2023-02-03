@@ -10,24 +10,45 @@ import time
 
 from cPython import cPython as cp
 
+cpu = 0
+load = []
+
 network_rx = 0  # 接收
 network_tx = 0  # 发送
 io_read = 0
 io_write = 0
 
-def get_cpu_info():
+
+def thread_get_cpu_sec():
+    global cpu, load
     _cpu_info = os.popen('cat /proc/cpuinfo | grep siblings').read()
     cpu_siblings = 1
     try:
         cpu_siblings = int(re.findall('(\d{1,3})', _cpu_info)[0])
     except:
         pass
-    _ = os.popen('top -bn 1 -i -c').read()
-    cpu = {
-        'use': round(100 - float(cp.get_string(_, 'ni,', 'id').strip()), 2),
-        'siblings': cpu_siblings,
-    }
-    load = [float(f.strip()) for f in cp.get_string(_, 'load average:', '\n').split(',')]
+    while True:
+        try:
+            process = subprocess.Popen('top -b -d 1 -i', shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                       stderr=subprocess.STDOUT)
+            while process.poll() is None:
+                line = process.stdout.readline()
+                line = line.strip()
+                if line:
+                    line = line.decode('gb2312', 'ignore')
+                    if line.find('load average') > -1:
+                        load = [float(f.strip()) for f in cp.get_string(line + '\n', 'load average:', '\n').split(',')]
+                    if line.find('Cpu') > -1:
+                        cpu = {
+                            'use': round(100 - float(cp.get_string(line, 'ni,', 'id').strip()), 2),
+                            'siblings': cpu_siblings
+                        }
+        except Exception as e:
+            print(e)
+            time.sleep(10)
+
+
+def get_cpu_info():
     return cpu, load
 
 
@@ -68,14 +89,13 @@ def thread_get_network_sec():
                             if name:
                                 datas[name] = 0
 
-                    if line.find('lo') > -1:
-                        continue
-                    _ = [ff for i, ff in enumerate(line.split(' ')) if ff and i > 0]
-                    for i, ff in enumerate(names):
-                        try:
-                            datas[ff] += float(_[i])
-                        except:
-                            pass
+                    if line.find('eth0') > -1:
+                        _ = [ff for i, ff in enumerate(line.split(' ')) if ff and i > 0]
+                        for i, ff in enumerate(names):
+                            try:
+                                datas[ff] += float(_[i])
+                            except:
+                                pass
                     network_rx = int(datas.get('rxkB/s', 0) * 1024)
                     network_tx = int(datas.get('txkB/s', 0) * 1024)
         except Exception as e:
@@ -147,7 +167,7 @@ def start():
                 },
             }
             print(data)
-            print(cp.post_for_request('http://8861.mac.xiaoc.cn/server_report_real/all', _data={'data': json.dumps(data)}))
+            cp.post_for_request('http://web-monitor.xiaoc.cn:1023/server_report_real/all', _data={'data': json.dumps(data)})
         except Exception as e:
             print(e)
         time.sleep(1)
@@ -156,7 +176,8 @@ def start():
 
 if __name__ == '__main__':
     t = os.popen('sar -b 1 1').read()
-    if t.lower().find('average') > -1:
+    threading.Thread(target=thread_get_cpu_sec).start()
+    if t.lower().find('tps') > -1:
         threading.Thread(target=thread_get_network_sec).start()
         threading.Thread(target=thread_get_io_sec).start()
         time.sleep(2)
