@@ -17,6 +17,7 @@ network_rx = 0  # 接收
 network_tx = 0  # 发送
 io_read = 0
 io_write = 0
+ip = 'auto'
 
 
 def thread_get_cpu_sec():
@@ -54,7 +55,7 @@ def get_cpu_info():
 
 def get_memory_info():
     _ = os.popen('free -b').read()
-    memory_temp = re.findall('Mem.+?(\d+).+?(\d+).+?(\d+).+?(\d+).+?(\d+).+?(\d+)', _)[0]
+    memory_temp = re.findall('[Mem|内存].+?(\d+).+?(\d+).+?(\d+).+?(\d+).+?(\d+).+?(\d+)', _)[0]
     memory_datas = {}
     memory_names_t = [f for f in _.split('\n')[0].split(' ') if f]
     for i, f in enumerate(memory_names_t):
@@ -151,6 +152,7 @@ def start():
             network_rx, network_tx = get_network_info()
             io_write, io_read = get_io_info()
             data = {
+                'ip': ip,
                 'cpu': cpu,
                 'load': load,
                 'memory': {

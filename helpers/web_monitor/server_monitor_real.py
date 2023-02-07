@@ -28,6 +28,9 @@ def get():
 
 
 def add(ip, data):
+    json_data = json.loads(data)
+    if json_data.get('ip', '') != 'auto':
+        ip = json_data.get('ip', '')
     if ip not in server_ip:
         server_ip.append(ip)
     server_info[ip] = data
