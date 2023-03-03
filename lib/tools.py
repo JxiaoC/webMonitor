@@ -1,9 +1,14 @@
+import time
+
+import io
+
 import datetime
 import json
 import os
 import re
 import random
 import execjs
+import requests
 from urllib.parse import quote
 from config import config
 from bson import ObjectId
@@ -98,25 +103,50 @@ def send_server_jiang_msg(title, desp, server_jiang_token=None):
     return False
 
 
+def get_for_request_return_html_and_cookie(url='', params='', _data='', headers=None, timeout=10, proxies=None):
+    if not headers:
+        headers = cp.default_headers
+        headers.__setitem__('Referer', url)
+
+    response = requests.request('GET', url, data=_data, headers=headers, params=params, timeout=timeout, proxies=proxies)
+    html = response.content
+    return html, ';'.join([(f[0] + '=' + f[1]) for f in response.cookies.items()])
+
+
 def get_host_expire(host):
     context = execjs.compile(open(CHINAZ_JS_PATH, 'r').read())
-    token = context.call("generateHostKey", host)
-    url = 'https://whois.chinaz.com/getWhoisInfoNew.ashx'
-    data = cp.post_for_request(url, _data={
-        'token': token,
-        'host': host,
-        'isup': 'true',
-        'ws': '',
-    })
-    if not data:
+    ts = int(time.time() * 1000)
+    token = context.call("whoisToken", "index", ts, host)
+    html, cookie = get_for_request_return_html_and_cookie('https://whois.chinaz.com/%s' % host)
+    secretKey = cp.get_string(str(html), '<p id="sk" hidden="hidden">', '<')
+
+    # 根本不需要验证码!
+    # html, _ = get_for_request_return_html_and_cookie('https://whois.chinaz.com/index/api/kaptcha', headers={'cookie': cookie})
+    # response = requests.request('POST', "http://localhost:3060/detection?password=xiaoc", files={'file': html})
+    # code = json.loads(response.text)['res']
+    # html = cp.post_for_request("https://whois.chinaz.com/index/api/checkKaptcha", _data={'code': code}, headers={'cookie': cookie})
+
+    html = cp.post_for_request("https://whois.chinaz.com/index/api/update", _data=json.dumps({
+        "module": "index",
+        "keyword": host,
+        "ts": ts,
+        "token": token,
+        "secretKey": secretKey
+    }), headers={"Content-Type": "application/json", 'cookie': cookie})
+
+    html = cp.post_for_request("https://whois.chinaz.com/index/api/getRawData", _data=json.dumps({
+        "module": "index",
+        "keyword": host,
+        "ts": ts,
+        "token": token,
+        "secretKey": secretKey
+    }), headers={"Content-Type": "application/json", 'cookie': cookie})
+    data = json.loads(html)
+    if data.get('code', 0) != 0:
         raise ResponseMsg(-1, '获取失败')
-    data = json.loads(data)
-    if data.get('code', 0) != 1:
-        raise ResponseMsg(-1, '获取失败')
-    print(data.get('detail', ''))
-    search_data = re.search('Expiration Time[:：].{0,1}(\d{4}-\d{2}-\d{2})', data.get('detail', ''))
+    search_data = re.search('Expiration Time[:：].{0,1}(\d{4}-\d{2}-\d{2})', data.get('data', ''))
     if not search_data:
-        search_data = re.search('Registry Expiry Date[:：].{0,1}(\d{4}-\d{2}-\d{2})', data.get('detail', ''))
+        search_data = re.search('Registry Expiry Date[:：].{0,1}(\d{4}-\d{2}-\d{2})', data.get('data', ''))
     if search_data:
         expire = datetime.datetime.strptime(search_data.group(1), '%Y-%m-%d')
         return expire
@@ -127,5 +157,5 @@ def get_host_expire(host):
 if __name__ == '__main__':
     # print(get_host_expire('jiji.moe'))
     # print(sec2hms(597402))
-    get_host_expire('jijidown.com')
+    print(get_host_expire('adesk.com'))
     pass
