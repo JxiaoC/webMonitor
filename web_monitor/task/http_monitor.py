@@ -161,7 +161,7 @@ for f in tb_web_list.find({'enable': True}):
         complete_count += 1
         continue
     threading.Thread(target=monitor, args=(f['_id'], info)).start()
-    time.sleep(0.5)
+    time.sleep(0.2)
 
 while complete_count < count and run_time_sec < 180:
     run_time_sec += 1
