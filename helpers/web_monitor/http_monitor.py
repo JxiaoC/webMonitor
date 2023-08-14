@@ -15,7 +15,7 @@ tb_web_list = model.WebList()
 tb_web_log = model.WebLog()
 
 
-def list(page, limit, search_key, search_value):
+def list(page, limit, search_key, search_value, status24_limit):
     now_time = datetime.datetime.now()
     res = []
     Q = {}
@@ -25,7 +25,7 @@ def list(page, limit, search_key, search_value):
         else:
             Q[search_key] = int(search_value) if tools.isint(search_value) else search_value
     for f in tb_web_list.find(Q).skip((page - 1) * limit).limit(limit).sort('atime', -1):
-        f['status24_list'], f['status24'], f['ave_delay'] = get_day_status(f['_id'])
+        f['status24_list'], f['status24'], f['ave_delay'] = get_day_status(f['_id'], status24_limit)
         f['ltime_str'] = tools.sec2hms((now_time - f.get('ltime', now_time)).total_seconds())
         if not f['ltime_str'].endswith('前'):
             f['ltime_str'] += '前'
@@ -41,10 +41,10 @@ def list(page, limit, search_key, search_value):
     return res, tb_web_list.find(Q).count()
 
 
-def get_day_status(id):
+def get_day_status(id, status24_limit):
     id = ObjectId(id)
     web_info = tb_web_list.find_by_id(id)
-    datas = tb_web_log.find({'id': id, 'atime': {'$gte': datetime.datetime.now() - datetime.timedelta(days=1)}}).sort('atime', -1).limit(100)
+    datas = tb_web_log.find({'id': id, 'atime': {'$gte': datetime.datetime.now() - datetime.timedelta(days=1)}}).sort('atime', -1).limit(status24_limit)
     res = []
     success, count, ave_delay = 0, 0, 0
     for data in datas:

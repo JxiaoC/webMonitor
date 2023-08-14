@@ -25,9 +25,10 @@ class HttpMonitorListHandler(BaseHandler):
     def get(self):
         page = int(self.get_argument('page', '1'))
         limit = int(self.get_argument('limit', '9999'))
+        status24_limit = int(self.get_argument('status24_limit', '100'))
         search_key = self.get_argument('search_key', '')
         search_value = self.get_argument('search_value', '')
-        list, count = http_monitor.list(page, limit, search_key, search_value)
+        list, count = http_monitor.list(page, limit, search_key, search_value, status24_limit)
         self.write({
             'code': 0,
             'msg': 'ok',
