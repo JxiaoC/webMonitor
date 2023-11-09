@@ -156,9 +156,9 @@ def test(name, url, rate, method, header, data, allow_http_code, find_str, find_
         'allow_http_code': [int(f) for f in allow_http_code.split(',') if f],
         'rate': int(rate),
     }
-    fail, http_code, run_time, err_data = http_monitor.monitor(None, test_data, True)
+    fail, http_code, run_time, err_data, http_content = http_monitor.monitor(None, test_data, True)
     if fail:
-        raise ResponseMsg(-1, '可用性警告, 耗时%sms, 返回http_code:%s, 错误信息:%s' % (run_time, http_code, err_data))
+        raise ResponseMsg(-1, '可用性警告, 耗时%sms, 返回http_code:%s, 错误信息:%s, 返回内容: %s' % (run_time, http_code, err_data, http_content))
     else:
         raise ResponseMsg(0, '可用性正常, 耗时%sms, 返回http_code:%s' % (run_time, http_code))
 

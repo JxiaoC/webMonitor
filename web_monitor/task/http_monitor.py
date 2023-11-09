@@ -96,7 +96,7 @@ def monitor(id, info, test=False):
             print(url, 'run_time', run_time, 'http_code', http_code)
             complete_count += 1
             lock.release()
-            return fail, http_code, run_time, err_data
+            return fail, http_code, run_time, err_data, http_content
         tb_web_log.insert({
             'id': id,
             'atime': now_time,
